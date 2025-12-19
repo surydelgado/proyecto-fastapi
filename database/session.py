@@ -17,9 +17,10 @@ engine = create_engine (
 
 # Sesiones
 SessionLocal = sessionmaker(
+    bind= engine,
     autocommit = False,
-    autoflush= False,
-    bind= engine
+    autoflush= False
+    
 )
 
 # Base para los modelos
