@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-sqlalchemy
-databases
-pydantic
-python-dotenv
-qrcode
-pyzbar
