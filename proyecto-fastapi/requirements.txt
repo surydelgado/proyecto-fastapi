@@ -6,8 +6,3 @@ pydantic
 python-dotenv
 qrcode
 pyzbar
-python-dotenv
-email-validator
-jinja2
-aiofiles
-

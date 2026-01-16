@@ -1,9 +1,8 @@
-from database.session import Base
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-
+from database.session import Base
 
 #Usuarios
 
