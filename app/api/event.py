@@ -58,7 +58,8 @@ def list_events(
     q = db.query(models.Event)
     if not include_inactive:
         q = q.filter(models.Event.is_active == True)  # noqa: E712
-    return q.order_by(models.Event.starts_at.desc()).offset(skip).limit(limit).all()
+    return q.order_by(models.Event.start_date.desc()).offset(skip).limit(limit).all()
+
 
 
 @router.get(

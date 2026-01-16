@@ -21,7 +21,7 @@ class User (Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     events_created = relationship("Event", back_populates="creator")
-    attendaces = relationship("Attendance", back_populates= "user")
+    attendances = relationship("Attendance", back_populates="user")
     credentials = relationship ("Credential",back_populates="user")
 
 
@@ -37,6 +37,8 @@ class Event(Base):
     end_date = Column(DateTime, nullable= False)
     location = Column(String(150))
     status = Column (String(30), default="pending") #Este es el estado en el que se puede encontrar la solicituda, ya sea pendiente, aprobado o denegado
+    is_active = Column(Boolean, default=True)
+
 
     creator_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -51,7 +53,7 @@ class Attendance (Base):
     __tablename__="attendances"
 
     id =Column(Integer, primary_key= True, index = True)
-    user_id = Column(Integer), ForeignKey("users_id")
+    user_id = Column(Integer, ForeignKey("users.id"))
     event_id = Column(Integer, ForeignKey("events.id"))
     qr_code= Column(String(255), unique=True, nullable=False)
     attended = Column(Boolean, default=False)
@@ -61,15 +63,18 @@ class Attendance (Base):
     event = relationship("Event", back_populates="attendances")
 
 #Microcredenciales
-id =Column(Integer, primary_key=True, index = True)
-credential_code = Column(String(100), unique=True, index=True, nullable=False)
-user_id = Column (Integer, ForeignKey("users.id"))
-event_id = Column (Integer, ForeignKey("events.id"))
-issued_at = Column (DateTime(timezone=True), server_default = func.now())
-is_valid = Column (Boolean, default=True)
+class Credential(Base):
+    __tablename__ = "credentials"
 
-user = relationship("User", back_populates="credentials")
-event = relationship("Event", back_populates="credentials")
+    id = Column(Integer, primary_key=True, index=True)
+    credential_code = Column(String(100), unique=True, index=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    event_id = Column(Integer, ForeignKey("events.id"))
+    issued_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_valid = Column(Boolean, default=True)
+
+    user = relationship("User", back_populates="credentials")
+    event = relationship("Event", back_populates="credentials")
 
 
 

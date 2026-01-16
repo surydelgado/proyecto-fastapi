@@ -10,4 +10,5 @@ python-dotenv
 email-validator
 jinja2
 aiofiles
+psycopg2-binary
 
