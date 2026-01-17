@@ -3,74 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Eventos Académicos</title>
+    <title>Sistema de Gestión de Eventos Académicos - PUCE Manabí</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts - Tipografía limpia y profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --puce-blue: #003366;
+            --puce-blue-light: #004080;
+            --puce-blue-dark: #002244;
+            --puce-blue-accent: #0059b3;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #e0e0e0;
+            --gray-text: #666666;
+            --gray-dark: #333333;
+        }
+
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: var(--gray-light);
+            color: var(--gray-dark);
+            font-size: 15px;
+            line-height: 1.6;
         }
+
+        /* Barra de Navegación Institucional */
+        .navbar-institutional {
+            background-color: var(--puce-blue);
+            border-bottom: 2px solid var(--puce-blue-dark);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-institutional .navbar-brand {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .navbar-institutional .navbar-brand:hover {
+            color: var(--white);
+            opacity: 0.9;
+        }
+
+        .navbar-institutional .logo-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--white);
+        }
+
+        .navbar-institutional .logo-img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.75rem;
+            object-fit: contain;
+        }
+
+        .navbar-institutional .navbar-nav {
+            align-items: center;
+        }
+
+        .navbar-institutional .nav-link {
+            color: var(--white);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .navbar-institutional .nav-link:hover {
+            background-color: var(--puce-blue-light);
+            color: var(--white);
+        }
+
+        .navbar-institutional .btn-nav {
+            background-color: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .navbar-institutional .btn-nav:hover {
+            background-color: var(--white);
+            color: var(--puce-blue);
+            border-color: var(--white);
+        }
+
+        .navbar-institutional .btn-nav-primary {
+            background-color: var(--white);
+            border: 1px solid var(--white);
+            color: var(--puce-blue);
+        }
+
+        .navbar-institutional .btn-nav-primary:hover {
+            background-color: var(--gray-light);
+            color: var(--puce-blue);
+            border-color: var(--white);
+        }
+
+        .navbar-institutional .navbar-toggler {
+            border: 1px solid var(--white);
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-institutional .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .navbar-institutional .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+
+        /* Header Institucional */
+        .header-section {
+            background: linear-gradient(180deg, var(--puce-blue) 0%, var(--puce-blue-dark) 100%);
+            color: var(--white);
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-section h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header-section p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* Cards y Secciones */
+        .form-section,
+        .events-section {
+            background: var(--white);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-medium);
+        }
+
+        .form-section h3,
+        .events-section h3 {
+            color: var(--puce-blue);
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--puce-blue-accent);
+            padding-bottom: 0.75rem;
+        }
+
+        /* Formularios */
+        .form-label {
+            font-weight: 500;
+            color: var(--gray-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border: 1px solid var(--gray-medium);
+            border-radius: 4px;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--puce-blue-accent);
+            box-shadow: 0 0 0 0.2rem rgba(0, 89, 179, 0.15);
+            outline: none;
+        }
+
+        /* Botones */
+        .btn-primary {
+            background-color: var(--puce-blue);
+            border-color: var(--puce-blue);
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--puce-blue-light);
+            border-color: var(--puce-blue-light);
+        }
+
+        .btn-outline-primary {
+            color: var(--puce-blue);
+            border-color: var(--puce-blue);
+            font-weight: 500;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--puce-blue);
+            border-color: var(--puce-blue);
+            color: var(--white);
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--gray-medium);
+            color: var(--gray-text);
+            font-weight: 500;
+        }
+
+        /* Event Cards */
         .event-card {
-            transition: transform 0.2s;
-            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid var(--puce-blue);
+            border-radius: 6px;
+            margin-bottom: 1rem;
         }
+
         .event-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .header-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+
+        .event-card .card-title {
+            color: var(--puce-blue);
+            font-weight: 600;
+            font-size: 1.2rem;
         }
-        .form-section {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
+
+        .event-card .card-text {
+            color: var(--gray-text);
+            font-size: 0.95rem;
         }
-        .events-section {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 2rem;
+
+        /* Badges */
+        .badge-status {
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
         }
+
+        .badge.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: var(--gray-text) !important;
+        }
+
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            color: #6c757d;
+            padding: 4rem 2rem;
+            color: var(--gray-text);
         }
-        .badge-status {
-            font-size: 0.85rem;
+
+        .empty-state i {
+            opacity: 0.3;
+        }
+
+        .empty-state h4 {
+            color: var(--gray-dark);
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+        }
+
+        /* Auth Section */
+        .auth-section {
+            background: var(--white);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-medium);
+        }
+
+        .auth-tabs {
+            border-bottom: 2px solid var(--gray-medium);
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-tabs .nav-link {
+            color: var(--gray-text);
+            font-weight: 500;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 0.75rem 1.5rem;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .auth-tabs .nav-link:hover {
+            color: var(--puce-blue);
+            border-bottom-color: var(--gray-medium);
+        }
+
+        .auth-tabs .nav-link.active {
+            color: var(--puce-blue);
+            border-bottom-color: var(--puce-blue);
+            background: transparent;
+        }
+
+        /* Loading Spinner */
+        .spinner-border {
+            color: var(--puce-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-section,
+            .events-section {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Barra de Navegación Institucional -->
+    <nav class="navbar navbar-expand-lg navbar-institutional">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
+                <span>Eventos Académicos</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" id="navLoginItem">
+                        <button class="btn btn-nav" onclick="showAuthModal('login')">
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                        </button>
+                    </li>
+                    <li class="nav-item" id="navRegisterItem">
+                        <button class="btn btn-nav btn-nav-primary" onclick="showAuthModal('register')">
+                            <i class="bi bi-person-plus"></i> Registrarse
+                        </button>
+                    </li>
+                    <li class="nav-item" id="navUserInfo" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <span class="text-white me-3" id="navUserName"></span>
+                            <button class="btn btn-nav" onclick="logout()">
+                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Institucional -->
     <div class="header-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="mb-0">
-                        <i class="bi bi-calendar-event"></i> Gestión de Eventos Académicos
+                <div class="col-md-12 text-center">
+                    <h1>
+                        <i class="bi bi-calendar-event"></i> Sistema de Gestión de Eventos Académicos
                     </h1>
-                    <p class="mb-0 mt-2 opacity-75">Sistema de administración de eventos universitarios</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <i class="bi bi-mortarboard-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p>Pontificia Universidad Católica del Ecuador - Sede Manabí</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container">
+        <!-- Sección de Autenticación (Modal) -->
+        <div class="modal fade" id="authModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: var(--puce-blue); color: white;">
+                        <h5 class="modal-title">Autenticación</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs auth-tabs" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#loginTab">
+                                    Iniciar Sesión
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#registerTab">
+                                    Registrarse
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="loginTab">
+                                <form id="loginForm" class="mt-3">
+                                    <div class="mb-3">
+                                        <label for="loginEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="loginEmail" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="loginPassword" class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="loginPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="registerTab">
+                                <form id="registerForm" class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="registerNames" class="form-label">Nombres <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="registerNames" required 
+                                                   minlength="2" maxlength="100" placeholder="Ej: Juan Carlos">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="registerSurnames" class="form-label">Apellidos <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="registerSurnames" required 
+                                                   minlength="2" maxlength="100" placeholder="Ej: Pérez González">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="registerCedula" class="form-label">Cédula <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="registerCedula" required 
+                                               minlength="10" maxlength="20" placeholder="Ej: 1234567890"
+                                               pattern="[0-9]+" title="Solo números">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="registerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="registerEmail" required 
+                                               placeholder="usuario@pucesm.edu.ec o correo@ejemplo.com">
+                                        <small class="form-text text-muted">
+                                            Si tu email termina en @pucesm.edu.ec, se asignará el rol "interno". 
+                                            De lo contrario, se asignará el rol "externo".
+                                        </small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="registerPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="registerPassword" required 
+                                               minlength="8" placeholder="Mínimo 8 caracteres">
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        <i class="bi bi-info-circle"></i> 
+                                        <small>Después del registro, recibirás un email de verificación. 
+                                        Debes verificar tu correo antes de poder iniciar sesión.</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-person-plus"></i> Registrarse
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Formulario para crear evento -->
-        <div class="form-section">
-            <h3 class="mb-4">
+        <div class="form-section" id="eventFormSection" style="display: none;">
+            <h3>
                 <i class="bi bi-plus-circle"></i> Crear Nuevo Evento
             </h3>
             <form id="eventForm">
@@ -93,12 +510,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label for="starts_at" class="form-label">Fecha y Hora de Inicio <span class="text-danger">*</span></label>
-                        <input type="datetime-local" class="form-control" id="starts_at" name="starts_at" required>
+                        <label for="start_date" class="form-label">Fecha y Hora de Inicio <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="ends_at" class="form-label">Fecha y Hora de Fin <span class="text-danger">*</span></label>
-                        <input type="datetime-local" class="form-control" id="ends_at" name="ends_at" required>
+                        <label for="end_date" class="form-label">Fecha y Hora de Fin <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="capacity" class="form-label">Capacidad</label>
@@ -130,7 +547,7 @@
             
             <!-- Loading spinner -->
             <div id="loading" class="text-center py-5" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
+                <div class="spinner-border" role="status">
                     <span class="visually-hidden">Cargando...</span>
                 </div>
             </div>
@@ -157,32 +574,316 @@
     
     <script>
         const API_BASE_URL = '/events';
+        const AUTH_BASE_URL = '/auth';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = null;
 
-        // Cargar eventos al cargar la página
+        // Verificar autenticación al cargar
         document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
             loadEvents();
         });
 
-        // Manejar el envío del formulario
+        // Funciones de autenticación
+        function showAuthModal(tab = 'login') {
+            const modal = new bootstrap.Modal(document.getElementById('authModal'));
+            modal.show();
+            
+            // Cambiar a la pestaña especificada
+            if (tab === 'register') {
+                const registerTab = document.querySelector('#registerTab');
+                const registerTabButton = document.querySelector('button[data-bs-target="#registerTab"]');
+                if (registerTab && registerTabButton) {
+                    registerTabButton.click();
+                }
+            } else {
+                const loginTab = document.querySelector('#loginTab');
+                const loginTabButton = document.querySelector('button[data-bs-target="#loginTab"]');
+                if (loginTab && loginTabButton) {
+                    loginTabButton.click();
+                }
+            }
+        }
+
+        async function login(email, password) {
+            try {
+                // Limpiar mensajes de error previos
+                const errorElement = document.getElementById('loginError');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.style.display = 'none';
+                }
+
+                // Validación básica
+                if (!email || !password) {
+                    showLoginError('Por favor completa todos los campos');
+                    return;
+                }
+
+                const response = await fetch(`${AUTH_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: email.trim().toLowerCase(), 
+                        password: password 
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    const errorMessage = error.detail || 'Error al iniciar sesión';
+                    
+                    // Mensajes de error específicos y claros
+                    if (response.status === 401) {
+                        showLoginError('Credenciales inválidas. Verifica tu email y contraseña.');
+                    } else if (response.status === 403) {
+                        showLoginError(errorMessage);
+                    } else {
+                        showLoginError(errorMessage);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                authToken = data.access_token;
+                currentUser = data.user;
+                
+                // Guardar en localStorage
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Cerrar modal
+                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                
+                // Limpiar formulario
+                document.getElementById('loginForm').reset();
+                
+                // Redirigir según el rol
+                const role = currentUser.role || 'externo';
+                
+                if (role === 'admin') {
+                    window.location.href = '/admin';
+                } else if (role === 'interno' || role === 'externo') {
+                    window.location.href = '/dashboard';
+                } else {
+                    // Rol no reconocido, redirigir al dashboard por defecto
+                    window.location.href = '/dashboard';
+                }
+                
+            } catch (error) {
+                console.error('Error en login:', error);
+                showLoginError('Error de conexión. Por favor intenta nuevamente.');
+            }
+        }
+
+        function showLoginError(message) {
+            // Crear o actualizar elemento de error
+            let errorElement = document.getElementById('loginError');
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.id = 'loginError';
+                errorElement.className = 'alert alert-danger mt-2';
+                errorElement.style.display = 'none';
+                const loginForm = document.getElementById('loginForm');
+                loginForm.appendChild(errorElement);
+            }
+            
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        async function register(names, surnames, cedula, email, password) {
+            try {
+                // Limpiar mensajes de error previos
+                const errorElement = document.getElementById('registerError');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.style.display = 'none';
+                }
+
+                // Validación básica
+                if (!names || !surnames || !cedula || !email || !password) {
+                    showRegisterError('Por favor completa todos los campos requeridos');
+                    return;
+                }
+
+                // Validar formato de cédula
+                if (!/^\d+$/.test(cedula)) {
+                    showRegisterError('La cédula debe contener solo números');
+                    return;
+                }
+
+                // Validar longitud de contraseña
+                if (password.length < 8) {
+                    showRegisterError('La contraseña debe tener al menos 8 caracteres');
+                    return;
+                }
+
+                const response = await fetch(`${AUTH_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        names: names.trim(),
+                        surnames: surnames.trim(),
+                        cedula: cedula.trim(),
+                        email: email.trim().toLowerCase(),
+                        password: password
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    const errorMessage = error.detail || 'Error al registrarse';
+                    
+                    if (response.status === 400) {
+                        showRegisterError(errorMessage);
+                    } else {
+                        showRegisterError('Error al procesar el registro. Por favor intenta nuevamente.');
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                
+                // Cerrar el modal
+                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                
+                // Limpiar el formulario
+                document.getElementById('registerForm').reset();
+                
+                // Mostrar mensaje de éxito
+                showAlert(data.message || 'Registro exitoso. Por favor verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada (y la carpeta de spam).', 'success');
+            } catch (error) {
+                console.error('Error en registro:', error);
+                showRegisterError('Error de conexión. Por favor intenta nuevamente.');
+            }
+        }
+
+        function showRegisterError(message) {
+            // Crear o actualizar elemento de error
+            let errorElement = document.getElementById('registerError');
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.id = 'registerError';
+                errorElement.className = 'alert alert-danger mt-2';
+                errorElement.style.display = 'none';
+                const registerForm = document.getElementById('registerForm');
+                registerForm.appendChild(errorElement);
+            }
+            
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            checkAuth();
+            showAlert('Sesión cerrada', 'info');
+            loadEvents();
+        }
+
+        function checkAuth() {
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+            }
+
+            if (authToken && currentUser) {
+                // Mostrar información del usuario en la navbar
+                document.getElementById('navUserInfo').style.display = 'block';
+                document.getElementById('navLoginItem').style.display = 'none';
+                document.getElementById('navRegisterItem').style.display = 'none';
+                document.getElementById('eventFormSection').style.display = 'block';
+                
+                const userName = (currentUser.names && currentUser.surnames)
+                    ? `${currentUser.names} ${currentUser.surnames}`
+                    : (currentUser.user_metadata?.names && currentUser.user_metadata?.surnames)
+                    ? `${currentUser.user_metadata.names} ${currentUser.user_metadata.surnames}`
+                    : currentUser.email;
+                document.getElementById('navUserName').textContent = userName;
+            } else {
+                // Mostrar botones de login/registro
+                document.getElementById('navUserInfo').style.display = 'none';
+                document.getElementById('navLoginItem').style.display = 'block';
+                document.getElementById('navRegisterItem').style.display = 'block';
+                document.getElementById('eventFormSection').style.display = 'none';
+            }
+        }
+
+        // Formularios de autenticación
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            await login(email, password);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const names = document.getElementById('registerNames').value;
+            const surnames = document.getElementById('registerSurnames').value;
+            const cedula = document.getElementById('registerCedula').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            // Validación básica
+            if (!names || !surnames || !cedula || !email || !password) {
+                showAlert('Por favor completa todos los campos requeridos', 'warning');
+                return;
+            }
+            
+            // Validar formato de cédula (solo números)
+            if (!/^\d+$/.test(cedula)) {
+                showAlert('La cédula debe contener solo números', 'warning');
+                return;
+            }
+            
+            await register(names, surnames, cedula, email, password);
+        });
+
+        // Manejar el envío del formulario de eventos
         document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (!authToken) {
+                showAlert('Debes iniciar sesión para crear eventos', 'warning');
+                showAuthModal();
+                return;
+            }
             
             const formData = new FormData(e.target);
             const eventData = {
                 title: formData.get('title'),
                 description: formData.get('description') || null,
                 location: formData.get('location') || null,
-                starts_at: formData.get('starts_at'),
-                ends_at: formData.get('ends_at'),
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date'),
                 capacity: formData.get('capacity') ? parseInt(formData.get('capacity')) : null
             };
 
             // Convertir fechas a formato ISO
-            if (eventData.starts_at) {
-                eventData.starts_at = new Date(eventData.starts_at).toISOString();
+            if (eventData.start_date) {
+                eventData.start_date = new Date(eventData.start_date).toISOString();
             }
-            if (eventData.ends_at) {
-                eventData.ends_at = new Date(eventData.ends_at).toISOString();
+            if (eventData.end_date) {
+                eventData.end_date = new Date(eventData.end_date).toISOString();
             }
 
             try {
@@ -190,26 +891,25 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
                     },
                     body: JSON.stringify(eventData)
                 });
 
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        showAlert('Sesión expirada. Por favor inicia sesión nuevamente', 'warning');
+                        return;
+                    }
                     const errorData = await response.json();
                     throw new Error(errorData.detail || 'Error al crear el evento');
                 }
 
                 const newEvent = await response.json();
-                
-                // Mostrar mensaje de éxito
                 showAlert('Evento creado exitosamente', 'success');
-                
-                // Limpiar formulario
                 e.target.reset();
-                
-                // Recargar lista de eventos
                 loadEvents();
-                
             } catch (error) {
                 showAlert('Error: ' + error.message, 'danger');
             }
@@ -228,8 +928,16 @@
             errorMessageEl.style.display = 'none';
 
             try {
-                const response = await fetch(API_BASE_URL);
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
                 
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(API_BASE_URL, { headers });
+
                 if (!response.ok) {
                     throw new Error('Error al cargar los eventos');
                 }
@@ -243,7 +951,6 @@
                 }
 
                 eventsListEl.innerHTML = events.map(event => createEventCard(event)).join('');
-                
             } catch (error) {
                 loadingEl.style.display = 'none';
                 errorMessageEl.textContent = 'Error al cargar los eventos: ' + error.message;
@@ -253,8 +960,8 @@
 
         // Crear tarjeta de evento
         function createEventCard(event) {
-            const startDate = new Date(event.starts_at);
-            const endDate = new Date(event.ends_at);
+            const startDate = new Date(event.start_date);
+            const endDate = new Date(event.end_date);
             const formattedStart = formatDateTime(startDate);
             const formattedEnd = formatDateTime(endDate);
             
@@ -309,9 +1016,9 @@
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
-                timeZone: 'America/Bogota'
+                timeZone: 'America/Guayaquil'
             };
-            return date.toLocaleDateString('es-ES', options);
+            return date.toLocaleDateString('es-EC', options);
         }
 
         // Escapar HTML para prevenir XSS
@@ -334,7 +1041,6 @@
             const container = document.querySelector('.container');
             container.insertBefore(alertDiv, container.firstChild);
             
-            // Auto-dismiss después de 5 segundos
             setTimeout(() => {
                 alertDiv.remove();
             }, 5000);

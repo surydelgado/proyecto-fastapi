@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Eventos Académicos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --puce-blue: #003366;
+            --puce-blue-light: #004080;
+            --puce-blue-dark: #002244;
+            --puce-blue-accent: #0059b3;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #e0e0e0;
+            --gray-text: #666666;
+            --gray-dark: #333333;
+        }
+
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-light);
+            color: var(--gray-dark);
+        }
+
+        .header-section {
+            background: linear-gradient(180deg, var(--puce-blue) 0%, var(--puce-blue-dark) 100%);
+            color: var(--white);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border: 1px solid var(--gray-medium);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background-color: var(--puce-blue);
+            border-color: var(--puce-blue);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--puce-blue-light);
+            border-color: var(--puce-blue-light);
+        }
+
+        /* Barra de Navegación Institucional */
+        .navbar-institutional {
+            background-color: var(--puce-blue);
+            border-bottom: 2px solid var(--puce-blue-dark);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-institutional .navbar-brand {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .navbar-institutional .navbar-brand:hover {
+            color: var(--white);
+            opacity: 0.9;
+        }
+
+        .navbar-institutional .logo-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--white);
+        }
+
+        .navbar-institutional .logo-img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.75rem;
+            object-fit: contain;
+        }
+
+        .navbar-institutional .nav-link {
+            color: var(--white);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .navbar-institutional .nav-link:hover {
+            background-color: var(--puce-blue-light);
+            color: var(--white);
+        }
+
+        .navbar-institutional .btn-nav {
+            background-color: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .navbar-institutional .btn-nav:hover {
+            background-color: var(--white);
+            color: var(--puce-blue);
+            border-color: var(--white);
+        }
+
+        .navbar-institutional .navbar-toggler {
+            border: 1px solid var(--white);
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-institutional .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .navbar-institutional .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de Navegación Institucional -->
+    <nav class="navbar navbar-expand-lg navbar-institutional">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
+                <span>Eventos Académicos</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <span class="text-white me-3" id="userName"></span>
+                            <button class="btn btn-nav" onclick="logout()">
+                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Bienvenido</h5>
+                        <p class="card-text">Esta es tu área de trabajo. Aquí podrás gestionar tus eventos y asistencias.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-calendar-event"></i> Mis Eventos</h5>
+                        <p class="card-text">Gestiona los eventos académicos en los que participas.</p>
+                        <a href="/" class="btn btn-primary">Ver Eventos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-check-circle"></i> Mis Asistencias</h5>
+                        <p class="card-text">Consulta tu historial de asistencias a eventos.</p>
+                        <button class="btn btn-primary" onclick="viewAttendances()">Ver Asistencias</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const AUTH_BASE_URL = '/auth';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+        // Verificar autenticación al cargar
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!authToken || !currentUser.id) {
+                window.location.href = '/';
+                return;
+            }
+
+            // Verificar que el rol sea válido para dashboard
+            const role = currentUser.role || 'externo';
+            if (role === 'admin') {
+                // Si es admin, redirigir al panel de admin
+                window.location.href = '/admin';
+                return;
+            }
+
+            if (role !== 'interno' && role !== 'externo') {
+                // Rol no válido, redirigir al inicio
+                window.location.href = '/';
+                return;
+            }
+
+            // Mostrar nombre del usuario
+            const userName = currentUser.names && currentUser.surnames
+                ? `${currentUser.names} ${currentUser.surnames}`
+                : currentUser.email;
+            document.getElementById('userName').textContent = userName;
+        });
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            window.location.href = '/';
+        }
+
+        function viewAttendances() {
+            // Implementar vista de asistencias
+            alert('Funcionalidad en desarrollo');
+        }
+    </script>
+</body>
+</html>
