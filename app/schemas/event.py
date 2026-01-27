@@ -6,6 +6,7 @@ from .base import APIModel, TimestampMixin
 class EventBase(APIModel):
     title: str = Field(min_length=3, max_length=150)
     description: str | None = Field(default=None, max_length=2000)
+    event_type: str | None = Field(default=None, max_length=100)
     location: str | None = Field(default=None, max_length=200)
     start_date: datetime
     end_date: datetime
@@ -23,6 +24,7 @@ class EventUpdate(APIModel):
     start_date: datetime | None = None
     end_date: datetime | None = None
     capacity: int | None = Field(default=None, ge=1)
+    status: str | None = Field(default=None, pattern="^(pending|approved|denied|finalized)$")
 
 
 class EventRead(EventBase, TimestampMixin):

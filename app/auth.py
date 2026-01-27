@@ -1,11 +1,6 @@
-"""
-Módulo de autenticación usando Supabase Auth.
-"""
-from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from supabase import Client
 from app.config import supabase
 
 security = HTTPBearer()
@@ -14,31 +9,15 @@ security = HTTPBearer()
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> dict:
-    """
-    Obtiene el usuario actual desde el token JWT de Supabase.
-    
-    Args:
-        credentials: Credenciales HTTP Bearer con el token JWT
-        
-    Returns:
-        dict: Información del usuario autenticado
-        
-    Raises:
-        HTTPException: Si el token es inválido o el usuario no está autenticado
-    """
     try:
         token = credentials.credentials
         
-        # Verificar el token con Supabase usando get_user
-        # El método get_user puede recibir el token directamente
         try:
             user_response = supabase.auth.get_user(token)
         except Exception:
-            # Si falla, intentar crear un cliente temporal con el token
             from app.config import SUPABASE_URL, SUPABASE_KEY
             from supabase import create_client
             temp_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-            # Configurar el header de autorización manualmente
             temp_client.auth._headers["Authorization"] = f"Bearer {token}"
             user_response = temp_client.auth.get_user()
         
@@ -51,14 +30,12 @@ async def get_current_user(
         
         user = user_response.user
         
-        # Verificar que el email esté confirmado
         if not user.email_confirmed_at:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Debes verificar tu correo electrónico antes de acceder. Revisa tu bandeja de entrada."
             )
         
-        # Verificar que el usuario esté activo en la tabla users
         try:
             user_db_response = supabase.table("users").select("is_active").eq("id", user.id).execute()
             if user_db_response.data and len(user_db_response.data) > 0:
@@ -70,7 +47,6 @@ async def get_current_user(
         except HTTPException:
             raise
         except Exception:
-            # Si no existe en la tabla users, permitir el acceso (puede ser un usuario antiguo)
             pass
         
         return {
@@ -93,10 +69,6 @@ async def get_current_user_optional(
         HTTPBearer(auto_error=False)
     )
 ) -> Optional[dict]:
-    """
-    Obtiene el usuario actual si está autenticado, sino retorna None.
-    Útil para endpoints que pueden funcionar con o sin autenticación.
-    """
     if not credentials:
         return None
     
@@ -107,12 +79,6 @@ async def get_current_user_optional(
 
 
 def require_role(required_role: str):
-    """
-    Decorador/dependencia para requerir un rol específico.
-    
-    Args:
-        required_role: Rol requerido (admin, teacher, student, external)
-    """
     async def role_checker(user: dict = Depends(get_current_user)) -> dict:
         user_role = user.get("user_metadata", {}).get("role", "student")
         
@@ -128,9 +94,6 @@ def require_role(required_role: str):
 
 
 def require_admin(user: dict = Depends(get_current_user)) -> dict:
-    """
-    Dependencia para requerir rol de administrador.
-    """
     user_role = user.get("user_metadata", {}).get("role", "student")
     
     if user_role != "admin":

@@ -15,6 +15,137 @@ router = APIRouter()
 
 
 @router.post(
+    "/enroll/{event_id}",
+    response_model=AttendanceRead,
+    status_code=status.HTTP_201_CREATED,
+    summary="Inscribirse a un evento aprobado",
+)
+async def enroll_to_event(
+    event_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Inscribe al usuario actual a un evento aprobado.
+    Requiere autenticación. El evento debe estar aprobado y activo.
+    """
+    try:
+        # Verificar que el evento existe y está aprobado
+        event_response = supabase.table("events").select("*").eq("id", event_id).execute()
+        
+        if not event_response.data or len(event_response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Evento no encontrado"
+            )
+        
+        event = event_response.data[0]
+        
+        # Verificar que el evento está aprobado
+        if event.get("status") != "approved":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Solo puedes inscribirte a eventos aprobados"
+            )
+        
+        # Verificar que el evento está activo
+        if not event.get("is_active", False):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El evento no está activo"
+            )
+        
+        # Verificar capacidad si está definida
+        if event.get("capacity"):
+            # Contar inscripciones actuales
+            count_response = supabase.table("attendances").select("id", count="exact").eq("event_id", event_id).execute()
+            current_count = count_response.count if hasattr(count_response, 'count') else len(count_response.data or [])
+            
+            if current_count >= event["capacity"]:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El evento ha alcanzado su capacidad máxima"
+                )
+        
+        # Verificar si el usuario ya está inscrito
+        existing_response = supabase.table("attendances").select("*").eq("user_id", current_user["id"]).eq("event_id", event_id).execute()
+        
+        if existing_response.data and len(existing_response.data) > 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ya estás inscrito en este evento"
+            )
+        
+        # Generar código QR único
+        qr_code = secrets.token_urlsafe(32)
+        
+        # Crear registro de inscripción/asistencia
+        attendance_data = {
+            "user_id": current_user["id"],
+            "event_id": event_id,
+            "qr_code": qr_code,
+            "attended": False,
+        }
+        
+        response = supabase.table("attendances").insert(attendance_data).execute()
+        
+        if not response.data or len(response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al inscribirse al evento"
+            )
+        
+        return {
+            "id": response.data[0]["id"],
+            "event_id": event_id,
+            "user_id": current_user["id"],
+            "status": "enrolled",
+            "attended_at": None,
+            "created_at": response.data[0].get("created_at") or response.data[0].get("timestamp"),
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al inscribirse al evento: {str(e)}"
+        )
+
+
+@router.get(
+    "/check-enrollment/{event_id}",
+    summary="Verificar si el usuario está inscrito en un evento",
+)
+async def check_enrollment(
+    event_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Verifica si el usuario actual está inscrito en un evento.
+    """
+    try:
+        response = supabase.table("attendances").select("*").eq("user_id", current_user["id"]).eq("event_id", event_id).execute()
+        
+        if response.data and len(response.data) > 0:
+            return {
+                "enrolled": True,
+                "attendance_id": response.data[0]["id"],
+                "attended": response.data[0].get("attended", False)
+            }
+        
+        return {
+            "enrolled": False,
+            "attendance_id": None,
+            "attended": False
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al verificar inscripción: {str(e)}"
+        )
+
+
+@router.post(
     "/generate-qr/{event_id}",
     summary="Generar código QR para un evento",
 )

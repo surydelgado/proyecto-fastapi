@@ -1,6 +1,3 @@
-"""
-API de autenticación usando Supabase Auth.
-"""
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
 from app.config import supabase
@@ -32,14 +29,6 @@ class RegisterResponse(BaseModel):
     summary="Iniciar sesión",
 )
 async def login(payload: LoginRequest):
-    """
-    Inicia sesión con email y contraseña.
-    Retorna un token JWT de Supabase.
-    
-    Requisitos:
-    - El email debe estar verificado
-    - El usuario debe estar activo (is_active = true)
-    """
     try:
         response = supabase.auth.sign_in_with_password({
             "email": payload.email,
@@ -52,37 +41,31 @@ async def login(payload: LoginRequest):
                 detail="Credenciales inválidas"
             )
         
-        # Verificar que el email esté confirmado
         if not response.user.email_confirmed_at:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Debes verificar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada."
             )
         
-        # Obtener información del usuario desde la tabla users (incluyendo el rol)
         user_response = supabase.table("users").select("is_active, role, names, surnames").eq("id", response.user.id).execute()
         
-        user_role = "externo"  # Rol por defecto
+        user_role = "externo"
         user_names = ""
         user_surnames = ""
         
         if user_response.data and len(user_response.data) > 0:
             user_data = user_response.data[0]
             
-            # Verificar que el usuario esté activo
             if not user_data.get("is_active", False):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Tu cuenta ha sido desactivada. Contacta al administrador."
                 )
             
-            # Obtener el rol desde la tabla users
             user_role = user_data.get("role", "externo")
             user_names = user_data.get("names", "")
             user_surnames = user_data.get("surnames", "")
         else:
-            # Si no existe en la tabla users, crear el registro básico
-            # Esto puede pasar si el usuario fue creado directamente en Supabase Auth
             default_role = response.user.user_metadata.get("role", "externo")
             supabase.table("users").insert({
                 "id": response.user.id,
@@ -135,20 +118,9 @@ async def login(payload: LoginRequest):
     summary="Registrar nuevo usuario",
 )
 async def register(payload: UserRegister):
-    """
-    Registra un nuevo usuario con nombres, apellidos, cédula, email y contraseña.
-    
-    Asigna el rol automáticamente:
-    - "interno" si el email termina en @pucesm.edu.ec
-    - "externo" en caso contrario
-    
-    Requiere verificación de correo antes de permitir el acceso.
-    """
     try:
-        # Determinar el rol según el dominio del email
         role = "interno" if payload.email.endswith("@pucesm.edu.ec") else "externo"
         
-        # Crear usuario en Supabase Auth con verificación de email requerida
         response = supabase.auth.sign_up({
             "email": payload.email,
             "password": payload.password,
@@ -159,7 +131,7 @@ async def register(payload: UserRegister):
                     "cedula": payload.cedula,
                     "role": role,
                 },
-                "email_redirect_to": None  # Se puede configurar una URL de redirección
+                "email_redirect_to": None
             }
         })
         
@@ -169,31 +141,92 @@ async def register(payload: UserRegister):
                 detail="Error al registrar el usuario"
             )
         
-        # Crear registro en la tabla users con información adicional
         user_data = {
-            "id": response.user.id,  # Usar el UUID de Auth
+            "id": response.user.id,
             "names": payload.names,
             "surnames": payload.surnames,
             "cedula": payload.cedula,
             "email": payload.email,
             "role": role,
-            "is_active": True,  # Activo por defecto, pero requiere verificación de email
+            "is_active": True,
         }
         
-        # Insertar en la tabla users
-        try:
-            db_response = supabase.table("users").insert(user_data).execute()
-        except Exception as db_error:
-            # Si falla la inserción, el usuario ya podría existir
-            # Intentar obtener el usuario existente
-            db_response = supabase.table("users").select("*").eq("id", response.user.id).execute()
-            if not db_response.data or len(db_response.data) == 0:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Error al guardar datos del usuario: {str(db_error)}"
-                )
+        import time
+        import traceback
         
-        # No retornar token porque el usuario debe verificar su email primero
+        try:
+            from app.config import supabase_admin, SUPABASE_SERVICE_KEY
+            
+            time.sleep(0.5)
+            
+            read_client = supabase_admin if (supabase_admin and SUPABASE_SERVICE_KEY) else supabase
+            
+            db_response = None
+            user_record = None
+            
+            try:
+                db_response = read_client.table("users").select("*").eq("id", response.user.id).execute()
+                if db_response.data and len(db_response.data) > 0:
+                    user_record = db_response.data[0]
+            except Exception as read_error:
+                time.sleep(0.5)
+                try:
+                    db_response = read_client.table("users").select("*").eq("id", response.user.id).execute()
+                    if db_response.data and len(db_response.data) > 0:
+                        user_record = db_response.data[0]
+                except Exception:
+                    if not supabase_admin or not SUPABASE_SERVICE_KEY:
+                        pass
+                    else:
+                        raise HTTPException(
+                            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Error: No se pudo verificar el registro creado por el trigger. El usuario fue creado en Auth pero puede haber un problema con la tabla users."
+                        )
+            
+            if user_record:
+                update_data = {}
+                
+                if user_record.get("names", "") != payload.names:
+                    update_data["names"] = payload.names
+                if user_record.get("surnames", "") != payload.surnames:
+                    update_data["surnames"] = payload.surnames
+                if user_record.get("cedula", "") != payload.cedula:
+                    update_data["cedula"] = payload.cedula
+                if user_record.get("role", "") != role:
+                    update_data["role"] = role
+                
+                if update_data and supabase_admin and SUPABASE_SERVICE_KEY:
+                    try:
+                        supabase_admin.table("users").update(update_data).eq("id", response.user.id).execute()
+                    except Exception as update_error:
+                        print(f"Advertencia: No se pudieron actualizar algunos datos: {str(update_error)}")
+            else:
+                if supabase_admin and SUPABASE_SERVICE_KEY:
+                    try:
+                        db_response = supabase_admin.table("users").insert(user_data).execute()
+                        user_record = db_response.data[0] if db_response.data else None
+                    except Exception as insert_error:
+                        error_str = str(insert_error).lower()
+                        if ("duplicate" in error_str or "already exists" in error_str or 
+                            "unique" in error_str or "foreign key" in error_str or 
+                            "23503" in error_str or "23514" in error_str or "constraint" in error_str):
+                            time.sleep(0.3)
+                            try:
+                                db_response = supabase_admin.table("users").select("*").eq("id", response.user.id).execute()
+                                if db_response.data and len(db_response.data) > 0:
+                                    user_record = db_response.data[0]
+                            except Exception:
+                                pass
+                        else:
+                            print(f"Advertencia al insertar usuario (el trigger debería haberlo creado): {str(insert_error)}")
+                            pass
+                    
+        except HTTPException:
+            raise
+        except Exception as db_error:
+            print(f"Error completo en registro: {traceback.format_exc()}")
+            pass
+        
         return {
             "message": "Usuario registrado exitosamente. Por favor verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada (y la carpeta de spam).",
             "user_id": response.user.id
@@ -214,14 +247,8 @@ async def register(payload: UserRegister):
         )
 
 
-@router.post(
-    "/logout",
-    summary="Cerrar sesión",
-)
+@router.post("/logout", summary="Cerrar sesión")
 async def logout():
-    """
-    Cierra la sesión del usuario actual.
-    """
     try:
         supabase.auth.sign_out()
         return {"message": "Sesión cerrada exitosamente"}

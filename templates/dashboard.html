@@ -7,129 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --puce-blue: #003366;
-            --puce-blue-light: #004080;
-            --puce-blue-dark: #002244;
-            --puce-blue-accent: #0059b3;
-            --white: #ffffff;
-            --gray-light: #f5f5f5;
-            --gray-medium: #e0e0e0;
-            --gray-text: #666666;
-            --gray-dark: #333333;
-        }
-
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: var(--gray-light);
-            color: var(--gray-dark);
-        }
-
-        .header-section {
-            background: linear-gradient(180deg, var(--puce-blue) 0%, var(--puce-blue-dark) 100%);
-            color: var(--white);
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card {
-            border: 1px solid var(--gray-medium);
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-
-        .btn-primary {
-            background-color: var(--puce-blue);
-            border-color: var(--puce-blue);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--puce-blue-light);
-            border-color: var(--puce-blue-light);
-        }
-
-        /* Barra de Navegación Institucional */
-        .navbar-institutional {
-            background-color: var(--puce-blue);
-            border-bottom: 2px solid var(--puce-blue-dark);
-            padding: 0.75rem 0;
-        }
-
-        .navbar-institutional .navbar-brand {
-            color: var(--white);
-            font-weight: 600;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .navbar-institutional .navbar-brand:hover {
-            color: var(--white);
-            opacity: 0.9;
-        }
-
-        .navbar-institutional .logo-icon {
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
-            color: var(--white);
-        }
-
-        .navbar-institutional .logo-img {
-            height: 40px;
-            width: auto;
-            margin-right: 0.75rem;
-            object-fit: contain;
-        }
-
-        .navbar-institutional .nav-link {
-            color: var(--white);
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-
-        .navbar-institutional .nav-link:hover {
-            background-color: var(--puce-blue-light);
-            color: var(--white);
-        }
-
-        .navbar-institutional .btn-nav {
-            background-color: transparent;
-            border: 1px solid var(--white);
-            color: var(--white);
-            font-weight: 500;
-            padding: 0.5rem 1.25rem;
-            border-radius: 4px;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        .navbar-institutional .btn-nav:hover {
-            background-color: var(--white);
-            color: var(--puce-blue);
-            border-color: var(--white);
-        }
-
-        .navbar-institutional .navbar-toggler {
-            border: 1px solid var(--white);
-            padding: 0.25rem 0.5rem;
-        }
-
-        .navbar-institutional .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-
-        .navbar-institutional .navbar-toggler:focus {
-            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
-        }
-    </style>
+    <!-- Estilos CSS Institucionales -->
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <!-- Barra de Navegación Institucional -->
@@ -152,8 +31,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <div class="d-flex align-items-center">
-                            <span class="text-white me-3" id="userName"></span>
+                        <div class="nav-user-info">
+                            <span class="nav-user-name" id="userName"></span>
                             <button class="btn btn-nav" onclick="logout()">
                                 <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                             </button>
@@ -176,12 +55,33 @@
             </div>
         </div>
 
+        <!-- Mis Eventos Propuestos -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Mis Eventos Propuestos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="myEventsLoading" class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <div id="myEventsList">
+                            <!-- Los eventos se cargarán aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-6 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-calendar-event"></i> Mis Eventos</h5>
-                        <p class="card-text">Gestiona los eventos académicos en los que participas.</p>
+                        <h5 class="card-title"><i class="bi bi-calendar-event"></i> Eventos Disponibles</h5>
+                        <p class="card-text">Inscríbete a eventos académicos aprobados.</p>
                         <a href="/" class="btn btn-primary">Ver Eventos</a>
                     </div>
                 </div>
@@ -192,6 +92,32 @@
                         <h5 class="card-title"><i class="bi bi-check-circle"></i> Mis Asistencias</h5>
                         <p class="card-text">Consulta tu historial de asistencias a eventos.</p>
                         <button class="btn btn-primary" onclick="viewAttendances()">Ver Asistencias</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para editar descripción -->
+        <div class="modal fade" id="editDescriptionModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Descripción del Evento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editDescriptionForm">
+                            <input type="hidden" id="editEventId">
+                            <div class="mb-3">
+                                <label for="editDescription" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="editDescription" rows="5" maxlength="2000" required></textarea>
+                                <small class="form-text text-muted">Puedes agregar o actualizar la descripción del evento ahora que está aprobado.</small>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="saveDescription()">Guardar Descripción</button>
                     </div>
                 </div>
             </div>
@@ -230,7 +156,144 @@
                 ? `${currentUser.names} ${currentUser.surnames}`
                 : currentUser.email;
             document.getElementById('userName').textContent = userName;
+
+            // Cargar eventos del usuario
+            loadMyEvents();
         });
+
+        async function loadMyEvents() {
+            const loadingEl = document.getElementById('myEventsLoading');
+            const eventsListEl = document.getElementById('myEventsList');
+
+            if (!loadingEl || !eventsListEl) return;
+
+            try {
+                const response = await fetch('/events?include_inactive=false', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al cargar eventos');
+                }
+
+                const allEvents = await response.json();
+                
+                // Filtrar solo los eventos del usuario actual
+                const myEvents = allEvents.filter(event => event.creator_id === currentUser.id);
+                
+                loadingEl.style.display = 'none';
+
+                if (myEvents.length === 0) {
+                    eventsListEl.innerHTML = '<p class="text-muted">No has propuesto ningún evento aún.</p>';
+                    return;
+                }
+
+                eventsListEl.innerHTML = myEvents.map(event => createMyEventCard(event)).join('');
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                eventsListEl.innerHTML = `<div class="alert alert-danger">Error al cargar eventos: ${error.message}</div>`;
+            }
+        }
+
+        function createMyEventCard(event) {
+            const startDate = new Date(event.start_date);
+            const formattedStart = startDate.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const statusBadges = {
+                'pending': '<span class="badge bg-warning text-dark">Pendiente</span>',
+                'approved': '<span class="badge bg-success">Aprobado</span>',
+                'denied': '<span class="badge bg-danger">Rechazado</span>',
+                'finalized': '<span class="badge bg-info">Finalizado</span>'
+            };
+
+            const statusBadge = statusBadges[event.status] || '<span class="badge bg-secondary">Desconocido</span>';
+
+            let editButton = '';
+            if (event.status === 'approved') {
+                editButton = `
+                    <button class="btn btn-sm btn-outline-primary" onclick="editDescription(${event.id}, '${escapeHtml(event.description || '')}')">
+                        <i class="bi bi-pencil"></i> Editar Descripción
+                    </button>
+                `;
+            }
+
+            return `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">${escapeHtml(event.title)}</h6>
+                            ${statusBadge}
+                        </div>
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-calendar"></i> ${formattedStart}
+                            ${event.location ? ` | <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
+                        </p>
+                        ${event.description ? `<p class="card-text">${escapeHtml(event.description)}</p>` : '<p class="card-text text-muted"><em>Sin descripción</em></p>'}
+                        ${editButton}
+                    </div>
+                </div>
+            `;
+        }
+
+        function editDescription(eventId, currentDescription) {
+            document.getElementById('editEventId').value = eventId;
+            document.getElementById('editDescription').value = currentDescription;
+            const modal = new bootstrap.Modal(document.getElementById('editDescriptionModal'));
+            modal.show();
+        }
+
+        async function saveDescription() {
+            const eventId = document.getElementById('editEventId').value;
+            const description = document.getElementById('editDescription').value;
+
+            if (!description.trim()) {
+                alert('La descripción no puede estar vacía');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/events/${eventId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        description: description.trim()
+                    })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error al actualizar la descripción');
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')).hide();
+                alert('Descripción actualizada exitosamente');
+                loadMyEvents();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         function logout() {
             localStorage.removeItem('authToken');

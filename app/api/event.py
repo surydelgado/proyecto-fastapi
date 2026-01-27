@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from enum import Enum
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
+from pydantic import BaseModel, Field
 
 from app.config import supabase
 from app.schemas.event import EventCreate, EventRead, EventUpdate, EventValidated
@@ -47,14 +49,20 @@ async def create_event(
     # Validación de fechas (end_date >= start_date)
     EventValidated(**payload.model_dump())
     
+    # Obtener el rol del usuario desde la base de datos
+    user_db_response = supabase.table("users").select("role").eq("id", current_user["id"]).execute()
+    user_role = "student"
+    if user_db_response.data and len(user_db_response.data) > 0:
+        user_role = user_db_response.data[0].get("role", "student")
+    
     # Preparar datos para insertar
     event_data = {
         "title": payload.title,
         "description": payload.description,
+        "event_type": payload.event_type,
         "location": payload.location,
         "start_date": payload.start_date.isoformat(),
         "end_date": payload.end_date.isoformat(),
-        "event_type": None,  # Se puede agregar después si es necesario
         "capacity": payload.capacity,
         "status": "pending",
         "is_active": True,
@@ -87,17 +95,22 @@ async def list_events(
     skip: int = 0,
     limit: int = 50,
     include_inactive: bool = False,
+    status: Optional[str] = None,
 ):
     """
     Lista eventos académicos.
     Por defecto solo muestra eventos activos.
+    Puede filtrar por estado (pending, approved, denied, finalized).
     """
     query = supabase.table("events").select("*")
     
     if not include_inactive:
         query = query.eq("is_active", True)
     
-    query = query.order("start_date", desc=True).range(skip, skip + limit - 1)
+    if status:
+        query = query.eq("status", status)
+    
+    query = query.order("created_at", desc=True).range(skip, skip + limit - 1)
     
     try:
         response = query.execute()
@@ -237,4 +250,147 @@ async def delete_event(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al eliminar el evento: {str(e)}"
+        )
+
+
+@router.get(
+    "/approved",
+    response_model=list[EventRead],
+    summary="Listar eventos aprobados",
+)
+async def list_approved_events():
+    """
+    Lista todos los eventos aprobados disponibles para inscripción.
+    Público, no requiere autenticación.
+    """
+    try:
+        response = supabase.table("events").select("*").eq("status", "approved").eq("is_active", True).order("start_date", desc=False).execute()
+        return response.data or []
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al listar eventos aprobados: {str(e)}"
+        )
+
+
+@router.get(
+    "/pending/list",
+    response_model=list[EventRead],
+    summary="Listar eventos pendientes",
+    dependencies=[Depends(require_admin)]
+)
+async def list_pending_events():
+    """
+    Lista todos los eventos pendientes de aprobación.
+    Solo accesible para administradores.
+    """
+    try:
+        response = supabase.table("events").select("*").eq("status", "pending").eq("is_active", True).order("created_at", desc=True).execute()
+        return response.data or []
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al listar eventos pendientes: {str(e)}"
+        )
+
+
+@router.patch(
+    "/{event_id}/approve",
+    response_model=EventRead,
+    summary="Aprobar un evento",
+    dependencies=[Depends(require_admin)]
+)
+async def approve_event(event_id: int):
+    """
+    Aprueba un evento cambiando su estado a "approved".
+    Solo accesible para administradores.
+    """
+    event = _get_event_or_404(event_id)
+    
+    try:
+        response = supabase.table("events").update({"status": "approved"}).eq("id", event_id).execute()
+        
+        if not response.data or len(response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al aprobar el evento"
+            )
+        
+        return response.data[0]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al aprobar el evento: {str(e)}"
+        )
+
+
+@router.patch(
+    "/{event_id}/reject",
+    response_model=EventRead,
+    summary="Rechazar un evento",
+    dependencies=[Depends(require_admin)]
+)
+async def reject_event(event_id: int):
+    """
+    Rechaza un evento cambiando su estado a "denied".
+    Solo accesible para administradores.
+    """
+    event = _get_event_or_404(event_id)
+    
+    try:
+        response = supabase.table("events").update({"status": "denied"}).eq("id", event_id).execute()
+        
+        if not response.data or len(response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al rechazar el evento"
+            )
+        
+        return response.data[0]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al rechazar el evento: {str(e)}"
+        )
+
+
+class EventStatus(str, Enum):
+    APPROVED = "approved"
+    FINALIZED = "finalized"
+
+
+class EventStatusUpdate(BaseModel):
+    status: EventStatus
+
+
+@router.patch(
+    "/{event_id}/status",
+    response_model=EventRead,
+    summary="Cambiar estado de un evento",
+    dependencies=[Depends(require_admin)]
+)
+async def change_event_status(
+    event_id: int,
+    payload: EventStatusUpdate
+):
+    """
+    Cambia el estado de un evento a "approved" o "finalized".
+    Solo accesible para administradores.
+    """
+    event = _get_event_or_404(event_id)
+    
+    try:
+        response = supabase.table("events").update({"status": payload.status.value}).eq("id", event_id).execute()
+        
+        if not response.data or len(response.data) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al cambiar el estado del evento"
+            )
+        
+        return response.data[0]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al cambiar el estado del evento: {str(e)}"
         )
