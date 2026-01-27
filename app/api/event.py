@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 from pydantic import BaseModel, Field
 
-from app.config import supabase
+from app.config import supabase, supabase_admin
 from app.schemas.event import EventCreate, EventRead, EventUpdate, EventValidated
 from app.auth import get_current_user, require_admin
 
@@ -50,10 +50,16 @@ async def create_event(
     EventValidated(**payload.model_dump())
     
     # Obtener el rol del usuario desde la base de datos
+    user_role = current_user.get("role") or current_user.get("user_metadata", {}).get("role", "student")
     user_db_response = supabase.table("users").select("role").eq("id", current_user["id"]).execute()
-    user_role = "student"
     if user_db_response.data and len(user_db_response.data) > 0:
-        user_role = user_db_response.data[0].get("role", "student")
+        user_role = user_db_response.data[0].get("role", user_role)
+
+    if user_role not in ["teacher", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos para proponer eventos",
+        )
     
     # Preparar datos para insertar
     event_data = {
@@ -119,6 +125,68 @@ async def list_events(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al listar eventos: {str(e)}"
+        )
+
+
+@router.get(
+    "/approved",
+    response_model=list[EventRead],
+    summary="Listar eventos aprobados",
+)
+async def list_approved_events():
+    """
+    Lista todos los eventos aprobados disponibles para inscripción.
+    Público, no requiere autenticación.
+    """
+    try:
+        client = supabase_admin or supabase
+        response = (
+            client.table("events")
+            .select("*")
+            .eq("status", "approved")
+            .eq("is_active", True)
+            .order("start_date", desc=False)
+            .execute()
+        )
+        return response.data or []
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al listar eventos aprobados: {str(e)}"
+        )
+
+
+@router.get(
+    "/approved/list",
+    response_model=list[EventRead],
+    summary="Listar eventos aprobados (lista)",
+)
+async def list_approved_events_list():
+    """
+    Lista todos los eventos aprobados disponibles para inscripción.
+    Ruta alternativa para evitar colisiones con /{event_id}.
+    """
+    return await list_approved_events()
+
+
+@router.get(
+    "/pending/list",
+    response_model=list[EventRead],
+    summary="Listar eventos pendientes",
+    dependencies=[Depends(require_admin)]
+)
+async def list_pending_events():
+    """
+    Lista todos los eventos pendientes de aprobación.
+    Solo accesible para administradores.
+    """
+    try:
+        response = supabase.table("events").select("*").eq("status", "pending").eq("is_active", True).order("created_at", desc=True).execute()
+        return response.data or []
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al listar eventos pendientes: {str(e)}"
         )
 
 
@@ -250,47 +318,6 @@ async def delete_event(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al eliminar el evento: {str(e)}"
-        )
-
-
-@router.get(
-    "/approved",
-    response_model=list[EventRead],
-    summary="Listar eventos aprobados",
-)
-async def list_approved_events():
-    """
-    Lista todos los eventos aprobados disponibles para inscripción.
-    Público, no requiere autenticación.
-    """
-    try:
-        response = supabase.table("events").select("*").eq("status", "approved").eq("is_active", True).order("start_date", desc=False).execute()
-        return response.data or []
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al listar eventos aprobados: {str(e)}"
-        )
-
-
-@router.get(
-    "/pending/list",
-    response_model=list[EventRead],
-    summary="Listar eventos pendientes",
-    dependencies=[Depends(require_admin)]
-)
-async def list_pending_events():
-    """
-    Lista todos los eventos pendientes de aprobación.
-    Solo accesible para administradores.
-    """
-    try:
-        response = supabase.table("events").select("*").eq("status", "pending").eq("is_active", True).order("created_at", desc=True).execute()
-        return response.data or []
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al listar eventos pendientes: {str(e)}"
         )
 
 

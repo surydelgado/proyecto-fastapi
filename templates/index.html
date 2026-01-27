@@ -532,7 +532,7 @@
             localStorage.removeItem('currentUser');
             checkAuth();
             showAlert('Sesión cerrada', 'info');
-            loadEvents();
+            loadApprovedEvents();
         }
 
         async function checkAuth() {
@@ -672,7 +672,7 @@
                 const newEvent = await response.json();
                 showAlert('Propuesta de evento enviada exitosamente. Será revisada por el administrador.', 'success');
                 e.target.reset();
-                loadEvents();
+                loadApprovedEvents();
             } catch (error) {
                 showAlert('Error: ' + error.message, 'danger');
             }
@@ -680,45 +680,9 @@
 
         // Cargar lista de eventos
         async function loadEvents() {
-            const loadingEl = document.getElementById('loading');
-            const eventsListEl = document.getElementById('eventsList');
-            const emptyStateEl = document.getElementById('emptyState');
-            const errorMessageEl = document.getElementById('errorMessage');
-
-            loadingEl.style.display = 'block';
-            eventsListEl.innerHTML = '';
-            emptyStateEl.style.display = 'none';
-            errorMessageEl.style.display = 'none';
-
-            try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                };
-                
-                if (authToken) {
-                    headers['Authorization'] = `Bearer ${authToken}`;
-                }
-
-                const response = await fetch(API_BASE_URL, { headers });
-
-                if (!response.ok) {
-                    throw new Error('Error al cargar los eventos');
-                }
-
-                const events = await response.json();
-                loadingEl.style.display = 'none';
-
-                if (events.length === 0) {
-                    emptyStateEl.style.display = 'block';
-                    return;
-                }
-
-                eventsListEl.innerHTML = events.map(event => createEventCard(event)).join('');
-            } catch (error) {
-                loadingEl.style.display = 'none';
-                errorMessageEl.textContent = 'Error al cargar los eventos: ' + error.message;
-                errorMessageEl.style.display = 'block';
-            }
+            // Compatibilidad: esta vista no tiene la lista general de eventos.
+            // Usamos la carga de eventos aprobados para evitar errores de DOM.
+            await loadApprovedEvents();
         }
 
         // Crear tarjeta de evento
@@ -787,7 +751,7 @@
             if (errorMessageEl) errorMessageEl.style.display = 'none';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/approved`);
+                const response = await fetch(`${API_BASE_URL}?status=approved&include_inactive=false&limit=200`);
 
                 if (!response.ok) {
                     throw new Error('Error al cargar los eventos aprobados');

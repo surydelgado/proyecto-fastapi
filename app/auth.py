@@ -36,14 +36,23 @@ async def get_current_user(
                 detail="Debes verificar tu correo electrónico antes de acceder. Revisa tu bandeja de entrada."
             )
         
+        user_role = user.user_metadata.get("role") if user.user_metadata else None
         try:
-            user_db_response = supabase.table("users").select("is_active").eq("id", user.id).execute()
+            user_db_response = (
+                supabase.table("users")
+                .select("is_active, role")
+                .eq("id", user.id)
+                .execute()
+            )
             if user_db_response.data and len(user_db_response.data) > 0:
-                if not user_db_response.data[0].get("is_active", False):
+                user_db_row = user_db_response.data[0]
+                if not user_db_row.get("is_active", False):
                     raise HTTPException(
                         status_code=status.HTTP_403_FORBIDDEN,
                         detail="Tu cuenta ha sido desactivada. Contacta al administrador."
                     )
+                if user_db_row.get("role"):
+                    user_role = user_db_row.get("role")
         except HTTPException:
             raise
         except Exception:
@@ -52,6 +61,7 @@ async def get_current_user(
         return {
             "id": user.id,
             "email": user.email,
+            "role": user_role,
             "user_metadata": user.user_metadata or {},
         }
     except HTTPException:
@@ -80,7 +90,7 @@ async def get_current_user_optional(
 
 def require_role(required_role: str):
     async def role_checker(user: dict = Depends(get_current_user)) -> dict:
-        user_role = user.get("user_metadata", {}).get("role", "student")
+        user_role = user.get("role") or user.get("user_metadata", {}).get("role", "student")
         
         if user_role != required_role and user_role != "admin":
             raise HTTPException(
@@ -94,7 +104,7 @@ def require_role(required_role: str):
 
 
 def require_admin(user: dict = Depends(get_current_user)) -> dict:
-    user_role = user.get("user_metadata", {}).get("role", "student")
+    user_role = user.get("role") or user.get("user_metadata", {}).get("role", "student")
     
     if user_role != "admin":
         raise HTTPException(
