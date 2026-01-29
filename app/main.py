@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
-from app.api import event, user, attendance, auth
+from app.api import event, user, attendance, auth, qr_asistencia
 from app.config import supabase, supabase_admin
 
 app = FastAPI(
@@ -29,6 +29,7 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(event.router, prefix="/events", tags=["events"])
 app.include_router(user.router, prefix="/users", tags=["users"])
 app.include_router(attendance.router, prefix="/attendance", tags=["attendance"])
+app.include_router(qr_asistencia.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

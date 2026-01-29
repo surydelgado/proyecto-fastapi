@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de asistencia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand mb-0"><i class="bi bi-qr-code-scan"></i> Registro de asistencia</span>
+        </div>
+    </nav>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Datos de asistencia</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if event_title %}
+                        <p class="text-muted mb-3">Evento: <strong>{{ event_title }}</strong></p>
+                        {% endif %}
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                        {% else %}
+                        <p class="text-muted mb-3">Completa tus datos para registrar tu asistencia.</p>
+                        <form id="formAsistencia">
+                            <input type="hidden" name="token" id="token" value="{{ token }}">
+                            <div class="mb-3">
+                                <label for="names" class="form-label">Nombres <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="names" name="names" required maxlength="300" placeholder="Ej. Juan Carlos">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="email" name="email" maxlength="200" placeholder="correo@ejemplo.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <input type="text" class="form-control" id="cedula" name="cedula" maxlength="50" placeholder="Ej. 1234567890">
+                            </div>
+                            <p class="small text-muted">Indica al menos correo o cédula.</p>
+                            <button type="submit" class="btn btn-primary w-100" id="btnSubmit">
+                                <i class="bi bi-check-circle"></i> Registrar asistencia
+                            </button>
+                        </form>
+                        <div id="resultMessage" class="mt-3" style="display: none;"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            var form = document.getElementById('formAsistencia');
+            if (!form) return;
+            var resultMessage = document.getElementById('resultMessage');
+            var btnSubmit = document.getElementById('btnSubmit');
+            var token = document.getElementById('token').value;
+            if (!token) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var names = document.getElementById('names').value.trim();
+                var email = document.getElementById('email').value.trim() || null;
+                var cedula = document.getElementById('cedula').value.trim() || null;
+                if (!names) {
+                    resultMessage.innerHTML = '<div class="alert alert-warning">Nombres son obligatorios.</div>';
+                    resultMessage.style.display = 'block';
+                    return;
+                }
+                if (!email && !cedula) {
+                    resultMessage.innerHTML = '<div class="alert alert-warning">Indica correo o cédula.</div>';
+                    resultMessage.style.display = 'block';
+                    return;
+                }
+                btnSubmit.disabled = true;
+                try {
+                    var res = await fetch('/qr/asistencia', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: token, names: names, email: email, cedula: cedula })
+                    });
+                    var data = await res.json().catch(function() { return {}; });
+                    if (res.ok && data.success) {
+                        resultMessage.innerHTML = '<div class="alert alert-success">Asistencia registrada ✅</div>';
+                        form.reset();
+                        document.getElementById('token').value = token;
+                    } else if (data.duplicate || (data.message && data.message.indexOf('Ya registrado') !== -1)) {
+                        resultMessage.innerHTML = '<div class="alert alert-info">Ya registrado.</div>';
+                    } else {
+                        resultMessage.innerHTML = '<div class="alert alert-danger">' + (data.detail || data.message || 'Error al registrar') + '</div>';
+                    }
+                    resultMessage.style.display = 'block';
+                } catch (err) {
+                    resultMessage.innerHTML = '<div class="alert alert-danger">Error de conexión.</div>';
+                    resultMessage.style.display = 'block';
+                }
+                btnSubmit.disabled = false;
+            });
+        })();
+    </script>
+</body>
+</html>

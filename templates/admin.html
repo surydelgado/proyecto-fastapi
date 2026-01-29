@@ -55,11 +55,14 @@
                     <i class="bi bi-shield-check"></i> Panel de Administración
                 </h2>
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary active" onclick="showPendingEvents()">
+                    <button type="button" class="btn btn-outline-primary active" id="btnPending" onclick="showPendingEvents()">
                         <i class="bi bi-clock-history"></i> Eventos Pendientes
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="showAllEvents()">
+                    <button type="button" class="btn btn-outline-primary" id="btnAll" onclick="showAllEvents()">
                         <i class="bi bi-calendar-event"></i> Todos los Eventos
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="btnQr" onclick="showQrSection()">
+                        <i class="bi bi-qr-code"></i> QR de asistencia
                     </button>
                 </div>
             </div>
@@ -79,6 +82,25 @@
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Cargando...</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección QR de asistencia (eventos aprobados con botón Ver QR) -->
+        <div id="qrSection" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-qr-code-scan"></i> QR de asistencia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Elige un evento aprobado y pulsa "Ver QR" para mostrar el código que los asistentes escanean para registrarse.</p>
+                    <div id="qrEventsList" class="events-list">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status"></div>
                         </div>
                     </div>
                 </div>
@@ -128,6 +150,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-outline-primary" id="btnShowQr" style="display: none;" onclick="showEventQr(currentEventId)">
+                        <i class="bi bi-qr-code"></i> Ver QR de asistencia
+                    </button>
                     <button type="button" class="btn btn-danger" id="btnRejectEvent" onclick="rejectEvent()">
                         <i class="bi bi-x-circle"></i> Rechazar
                     </button>
@@ -143,6 +168,23 @@
                             <li><a class="dropdown-item" href="#" onclick="changeEventStatus('finalized')">Finalizado</a></li>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar QR de asistencia -->
+    <div class="modal fade" id="qrModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-qr-code-scan"></i> QR de asistencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="small text-muted">Escanear para registrar asistencia al evento</p>
+                    <div id="qrImageContainer"></div>
+                    <p id="qrError" class="text-danger small mt-2" style="display: none;"></p>
                 </div>
             </div>
         </div>
@@ -190,6 +232,7 @@
         function showPendingEvents() {
             document.getElementById('pendingEventsSection').style.display = 'block';
             document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('qrSection').style.display = 'none';
             document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             loadPendingEvents();
@@ -198,9 +241,62 @@
         function showAllEvents() {
             document.getElementById('pendingEventsSection').style.display = 'none';
             document.getElementById('allEventsSection').style.display = 'block';
+            document.getElementById('qrSection').style.display = 'none';
             document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             loadAllEvents();
+        }
+
+        function showQrSection() {
+            document.getElementById('pendingEventsSection').style.display = 'none';
+            document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('qrSection').style.display = 'block';
+            document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btnQr').classList.add('active');
+            loadQrEvents();
+        }
+
+        async function loadQrEvents() {
+            const container = document.getElementById('qrEventsList');
+            if (!container) return;
+            container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
+            try {
+                const response = await fetch(`${API_BASE_URL}?status=approved&include_inactive=false&limit=100`);
+                if (!response.ok) throw new Error('Error al cargar eventos');
+                const events = await response.json();
+                renderQrEvents(events);
+            } catch (error) {
+                container.innerHTML = `<div class="alert alert-danger">Error al cargar eventos: ${error.message}</div>`;
+            }
+        }
+
+        function renderQrEvents(events) {
+            const container = document.getElementById('qrEventsList');
+            if (!container) return;
+            if (events.length === 0) {
+                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos aprobados. Aprobá un evento para generar su QR de asistencia.</div>';
+                return;
+            }
+            container.innerHTML = events.map(event => `
+                <div class="card mb-3 event-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">${escapeHtml(event.title)}</h5>
+                                <p class="card-text text-muted">
+                                    <i class="bi bi-calendar"></i> ${formatDate(event.start_date)} - ${formatDate(event.end_date)}
+                                    ${event.location ? `| <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
+                                </p>
+                            </div>
+                            <div class="ms-3">
+                                <button type="button" class="btn btn-sm btn-success" onclick="showEventQr(${event.id})">
+                                    <i class="bi bi-qr-code"></i> Ver QR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         async function loadPendingEvents() {
@@ -344,6 +440,9 @@
                                     </button>
                                 ` : ''}
                                 ${event.status === 'approved' ? `
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showEventQr(${event.id})">
+                                        <i class="bi bi-qr-code"></i> Ver QR
+                                    </button>
                                     <button class="btn btn-sm btn-primary" onclick="changeEventStatusById(${event.id}, 'finalized')">
                                         <i class="bi bi-check-all"></i> Marcar como Finalizado
                                     </button>
@@ -422,21 +521,57 @@
                 const btnApprove = document.getElementById('btnApproveEvent');
                 const btnReject = document.getElementById('btnRejectEvent');
                 const statusGroup = document.getElementById('statusChangeGroup');
+                const btnShowQr = document.getElementById('btnShowQr');
 
                 if (event.status === 'pending') {
                     btnApprove.style.display = 'inline-block';
                     btnReject.style.display = 'inline-block';
                     statusGroup.style.display = 'none';
+                    if (btnShowQr) btnShowQr.style.display = 'none';
                 } else {
                     btnApprove.style.display = 'none';
                     btnReject.style.display = 'none';
                     statusGroup.style.display = 'inline-block';
+                    if (btnShowQr) btnShowQr.style.display = event.status === 'approved' ? 'inline-block' : 'none';
                 }
 
                 const modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
                 modal.show();
             } catch (error) {
                 alert('Error al cargar detalles del evento: ' + error.message);
+            }
+        }
+
+        async function showEventQr(eventId) {
+            const container = document.getElementById('qrImageContainer');
+            const qrError = document.getElementById('qrError');
+            if (!container || !qrError) return;
+            container.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+            qrError.style.display = 'none';
+            const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+            modal.show();
+            try {
+                const res = await fetch(`/attendance/event/${eventId}/qr-image`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    qrError.textContent = err.detail || 'No se pudo cargar el QR. Configura APP_BASE_URL en .env (ej: http://TU_IP:8000).';
+                    qrError.style.display = 'block';
+                    container.innerHTML = '';
+                    return;
+                }
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                container.innerHTML = '<img src="' + url + '" alt="QR" class="img-fluid" style="max-width: 260px;">';
+                document.getElementById('qrModal').addEventListener('hidden.bs.modal', function onHide() {
+                    URL.revokeObjectURL(url);
+                    document.getElementById('qrModal').removeEventListener('hidden.bs.modal', onHide);
+                }, { once: true });
+            } catch (e) {
+                qrError.textContent = 'Error: ' + (e.message || 'No se pudo cargar');
+                qrError.style.display = 'block';
+                container.innerHTML = '';
             }
         }
 

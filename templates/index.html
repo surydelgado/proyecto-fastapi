@@ -858,7 +858,11 @@
                 showAuthModal('login');
                 return;
             }
-
+            const btn = document.querySelector(`button[onclick="enrollToEvent(${eventId})"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Inscribiendo...';
+            }
             try {
                 const response = await fetch(`/attendance/enroll/${eventId}`, {
                     method: 'POST',
@@ -870,18 +874,35 @@
 
                 if (!response.ok) {
                     if (response.status === 401) {
+                        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-person-plus"></i> Inscribirse'; }
                         logout();
                         showAlert('Sesión expirada. Por favor inicia sesión nuevamente', 'warning');
                         return;
                     }
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Error al inscribirse al evento');
+                    if (response.status === 409) {
+                        showAlert('Ya estás inscrito en este evento', 'info');
+                        await loadApprovedEvents();
+                        return;
+                    }
+                    let msg = 'Error al inscribirse al evento';
+                    try {
+                        const errorData = await response.json();
+                        const d = errorData.detail;
+                        msg = Array.isArray(d) ? (d[0]?.msg || String(d[0])) : (d || msg);
+                    } catch (_) {}
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-person-plus"></i> Inscribirse'; }
+                    showAlert(msg, 'danger');
+                    return;
                 }
 
                 showAlert('Te has inscrito exitosamente al evento', 'success');
-                loadApprovedEvents();
+                await loadApprovedEvents();
             } catch (error) {
-                showAlert('Error: ' + error.message, 'danger');
+                showAlert('Error: ' + (error.message || 'No se pudo conectar'), 'danger');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-person-plus"></i> Inscribirse';
+                }
             }
         }
 
