@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Eventos AcadÃ©micos</title>
+    <title>Dashboard - Sistema de Eventos Académicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <!-- Barra de NavegaciÃ³n Institucional -->
+    <!-- Barra de Navegación Institucional -->
     <nav class="navbar navbar-expand-lg navbar-institutional">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo-puce.png" alt="PUCE ManabÃ­" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
                 <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
-                <span>Eventos AcadÃ©micos</span>
+                <span>Eventos Académicos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,7 @@
                         <div class="nav-user-info">
                             <span class="nav-user-name" id="userName"></span>
                             <button class="btn btn-nav" onclick="logout()">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar SesiÃ³n
+                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                             </button>
                         </div>
                     </li>
@@ -49,7 +49,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Bienvenido</h5>
-                        <p class="card-text">Esta es tu Ã¡rea de trabajo. AquÃ­ podrÃ¡s gestionar tus eventos y asistencias.</p>
+                        <p class="card-text">Esta es tu área de trabajo. Aquí podrás gestionar tus eventos y asistencias.</p>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                                     </div>
                                 </div>
                                 <div id="myEventsList">
-                                    <!-- Los eventos se cargarÃ¡n aquÃ­ -->
+                                    <!-- Los eventos se cargarán aquí -->
                                 </div>
                             </div>
                         </div>
@@ -100,12 +100,12 @@
                                 <h5 class="card-title"><i class="bi bi-plus-circle"></i> Proponer evento</h5>
                                 <div class="alert alert-info" role="alert">
                                     <i class="bi bi-info-circle"></i>
-                                    <small>Tu propuesta serÃ¡ revisada por el administrador. Una vez aprobada, podrÃ¡s agregar una imagen de portada.</small>
+                                    <small>Tu propuesta será revisada por el administrador. Una vez aprobada, podrás agregar una imagen de portada.</small>
                                 </div>
                                 <form id="teacherEventForm">
                                     <div class="row">
                                         <div class="col-md-8 mb-3">
-                                            <label for="teacherTitle" class="form-label">TÃ­tulo del Evento <span class="text-danger">*</span></label>
+                                            <label for="teacherTitle" class="form-label">Título del Evento <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="teacherTitle" name="title" required minlength="3" maxlength="150"
                                                    placeholder="Ej: Conferencia de Inteligencia Artificial">
                                         </div>
@@ -118,7 +118,7 @@
                                                 <option value="Taller">Taller</option>
                                                 <option value="Congreso">Congreso</option>
                                                 <option value="Simposio">Simposio</option>
-                                                <option value="Jornada AcadÃ©mica">Jornada AcadÃ©mica</option>
+                                                <option value="Jornada Académica">Jornada Académica</option>
                                                 <option value="Charla">Charla</option>
                                                 <option value="Otro">Otro</option>
                                             </select>
@@ -128,7 +128,7 @@
                                         <div class="col-md-4 mb-3">
                                             <label for="teacherAudience" class="form-label">Acceso</label>
                                             <select class="form-control" id="teacherAudience" name="audience">
-                                                <option value="publico">Abierto al pÃºblico</option>
+                                                <option value="publico">Abierto al público</option>
                                                 <option value="interno">Solo PUCE</option>
                                                 <option value="interuniversitario">Interuniversitario</option>
                                             </select>
@@ -140,7 +140,7 @@
                                             <label class="form-check-label" for="teacherRequiresCertificate">Requiere microcredencial</label>
                                         </div>
                                         <div id="teacherCertificateFields" style="display: none;">
-                                            <label for="teacherCertificateTitle" class="form-label">TÃ­tulo del certificado (opcional)</label>
+                                            <label for="teacherCertificateTitle" class="form-label">Título del certificado (opcional)</label>
                                             <input type="text" class="form-control" id="teacherCertificateTitle" placeholder="Certificado de Asistencia">
                                             <div class="form-check form-switch mt-2 mb-2">
                                                 <input class="form-check-input" type="checkbox" id="teacherRequiresProfessorSignature">
@@ -161,9 +161,9 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="teacherDescription" class="form-label">DescripciÃ³n <span class="text-danger">*</span></label>
+                                        <label for="teacherDescription" class="form-label">Descripción <span class="text-danger">*</span></label>
                                         <textarea class="form-control" id="teacherDescription" name="description" rows="4" maxlength="2000"
-                                                  placeholder="DescripciÃ³n detallada del evento, objetivos, pÃºblico objetivo, etc." required></textarea>
+                                                  placeholder="Descripción detallada del evento, objetivos, público objetivo, etc." required></textarea>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -177,14 +177,14 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="teacherLocation" class="form-label">UbicaciÃ³n</label>
+                                            <label for="teacherLocation" class="form-label">Ubicación</label>
                                             <input type="text" class="form-control" id="teacherLocation" name="location" maxlength="200"
                                                    placeholder="Ej: Auditorio Principal, Aula 101">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="teacherCapacity" class="form-label">Capacidad</label>
                                             <input type="number" class="form-control" id="teacherCapacity" name="capacity" min="1"
-                                                   placeholder="NÃºmero mÃ¡ximo de participantes">
+                                                   placeholder="Número máximo de participantes">
                                         </div>
                                     </div>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -217,7 +217,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><i class="bi bi-calendar-event"></i> Eventos Disponibles</h5>
-                        <p class="card-text">InscrÃ­bete a eventos acadÃ©micos aprobados.</p>
+                        <p class="card-text">Inscríbete a eventos académicos aprobados.</p>
                         <a href="/" class="btn btn-primary">Ver Eventos</a>
                     </div>
                 </div>
@@ -245,27 +245,27 @@
             </div>
         </div>
 
-        <!-- Modal para editar descripciÃ³n -->
+        <!-- Modal para editar descripción -->
         <div class="modal fade" id="editDescriptionModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar DescripciÃ³n del Evento</h5>
+                        <h5 class="modal-title">Editar Descripción del Evento</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <form id="editDescriptionForm">
                             <input type="hidden" id="editEventId">
                             <div class="mb-3">
-                                <label for="editDescription" class="form-label">DescripciÃ³n</label>
+                                <label for="editDescription" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="editDescription" rows="5" maxlength="2000" required></textarea>
-                                <small class="form-text text-muted">Puedes agregar o actualizar la descripciÃ³n del evento ahora que estÃ¡ aprobado.</small>
+                                <small class="form-text text-muted">Puedes agregar o actualizar la descripción del evento ahora que está aprobado.</small>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="saveDescription()">Guardar DescripciÃ³n</button>
+                        <button type="button" class="btn btn-primary" onclick="saveDescription()">Guardar Descripción</button>
                     </div>
                 </div>
             </div>
@@ -287,7 +287,7 @@
                         </div>
                         <div id="attendancesList"></div>
                         <div id="attendancesEmpty" class="text-muted" style="display: none;">
-                            No tienes asistencias registradas todavÃ­a.
+                            No tienes asistencias registradas todavía.
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -312,7 +312,7 @@
                         </div>
                         <div id="credentialsList"></div>
                         <div id="credentialsEmpty" class="text-muted" style="display: none;">
-                            No tienes credenciales emitidas todavÃ­a.
+                            No tienes credenciales emitidas todavía.
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -418,7 +418,7 @@
                 loadingEl.style.display = 'none';
 
                 if (myEvents.length === 0) {
-                    eventsListEl.innerHTML = '<p class="text-muted">No has propuesto ningÃºn evento aÃºn.</p>';
+                    eventsListEl.innerHTML = '<p class="text-muted">No has propuesto ningún evento aún.</p>';
                     return;
                 }
 
@@ -436,7 +436,7 @@
                 e.preventDefault();
 
                 if (!authToken) {
-                    alert('Debes iniciar sesiÃ³n para crear eventos');
+                    alert('Debes iniciar sesión para crear eventos');
                     return;
                 }
 
@@ -489,7 +489,7 @@
                         throw new Error(errorData.detail || 'Error al crear el evento');
                     }
 
-                    alert('Propuesta enviada exitosamente. SerÃ¡ revisada por el administrador.');
+                    alert('Propuesta enviada exitosamente. Será revisada por el administrador.');
                     e.target.reset();
                     loadMyEvents();
                 } catch (error) {
@@ -522,7 +522,7 @@
             if (normalizedStatus === 'approved') {
                 editButton = `
                     <button class="btn btn-sm btn-outline-primary" onclick="editDescription(${event.id}, '${escapeHtml(event.description || '')}')">
-                        <i class="bi bi-pencil"></i> Editar DescripciÃ³n
+                        <i class="bi bi-pencil"></i> Editar Descripción
                     </button>
                 `;
             }
@@ -542,7 +542,7 @@
                                 <i class="bi bi-upload"></i> Subir
                             </button>
                         </div>
-                        <small class="text-muted">Solo imÃ¡genes JPG, PNG o WebP.</small>
+                        <small class="text-muted">Solo imágenes JPG, PNG o WebP.</small>
                     </div>
                 `;
             }
@@ -585,10 +585,10 @@
                             ${event.location ? ` | <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
                         </p>
                         <p class="card-text text-muted mb-2">
-                            <i class="bi bi-award"></i> Microcredencial: ${event.requires_certificate ? 'SÃ­' : 'No'}
+                            <i class="bi bi-award"></i> Microcredencial: ${event.requires_certificate ? 'Sí' : 'No'}
                         </p>
                         ${coverImage}
-                        ${event.description ? `<p class="card-text">${escapeHtml(event.description)}</p>` : '<p class="card-text text-muted"><em>Sin descripciÃ³n</em></p>'}
+                        ${event.description ? `<p class="card-text">${escapeHtml(event.description)}</p>` : '<p class="card-text text-muted"><em>Sin descripción</em></p>'}
                         ${editButton}
                         ${coverUpload}
                         ${professorSignatureSection}
@@ -609,7 +609,7 @@
             const description = document.getElementById('editDescription').value;
 
             if (!description.trim()) {
-                alert('La descripciÃ³n no puede estar vacÃ­a');
+                alert('La descripción no puede estar vacía');
                 return;
             }
 
@@ -631,11 +631,11 @@
                         return;
                     }
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Error al actualizar la descripciÃ³n');
+                    throw new Error(errorData.detail || 'Error al actualizar la descripción');
                 }
 
                 bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')).hide();
-                alert('DescripciÃ³n actualizada exitosamente');
+                alert('Descripción actualizada exitosamente');
                 loadMyEvents();
             } catch (error) {
                 alert('Error: ' + error.message);
@@ -826,9 +826,9 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
-                                    <h6 class="card-title mb-0">${escapeHtml(cred.event_title || 'Evento acadÃ©mico')}</h6>
+                                    <h6 class="card-title mb-0">${escapeHtml(cred.event_title || 'Evento académico')}</h6>
                                     <span class="badge ${status ? 'bg-success' : 'bg-danger'}">
-                                        ${status ? 'VÃ¡lido' : 'Revocado'}
+                                        ${status ? 'Válido' : 'Revocado'}
                                     </span>
                                 </div>
                                 ${issued ? `<p class="card-text text-muted mb-1"><i class="bi bi-calendar-check"></i> Emitido: ${issued}</p>` : ''}
@@ -851,7 +851,7 @@
         async function downloadCredential(credentialCode, title) {
             const token = localStorage.getItem('access_token') || authToken;
             if (!token) {
-                alert('Inicia sesiÃ³n para descargar tu microcredencial.');
+                alert('Inicia sesión para descargar tu microcredencial.');
                 return;
             }
             try {
@@ -863,7 +863,7 @@
                 });
                 if (!response.ok) {
                     if (response.status === 401) {
-                        alert('Inicia sesiÃ³n para descargar tu microcredencial.');
+                        alert('Inicia sesión para descargar tu microcredencial.');
                         return;
                     }
                     if (response.status === 403) {

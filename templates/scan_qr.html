@@ -35,9 +35,9 @@
                         {% if auto_registered %}
                         <div class="alert alert-success" role="alert">
                             <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i><br>
-                            <strong style="font-size: 1.2rem;">Â¡Asistencia Registrada Exitosamente!</strong><br><br>
+                            <strong style="font-size: 1.2rem;">¡Asistencia Registrada Exitosamente!</strong><br><br>
                             {{ message }}<br><br>
-                            <small class="text-muted">Tu asistencia ha sido confirmada automÃ¡ticamente al escanear el cÃ³digo QR.</small>
+                            <small class="text-muted">Tu asistencia ha sido confirmada automáticamente al escanear el código QR.</small>
                         </div>
                         {% elif already_registered %}
                         <div class="alert alert-info" role="alert">
@@ -48,18 +48,18 @@
                         {% else %}
                         <div class="alert alert-success" role="alert">
                             <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i><br>
-                            <strong style="font-size: 1.2rem;">Â¡Asistencia Registrada Exitosamente!</strong><br><br>
-                            Tu asistencia al evento ha sido confirmada âœ…
+                            <strong style="font-size: 1.2rem;">¡Asistencia Registrada Exitosamente!</strong><br><br>
+                            Tu asistencia al evento ha sido confirmada ✅.
                         </div>
                         {% endif %}
                         {% elif needs_login %}
                         <div class="alert alert-warning" role="alert">
-                            <i class="bi bi-exclamation-triangle"></i> <strong>Debes iniciar sesiÃ³n</strong><br>
+                            <i class="bi bi-exclamation-triangle"></i> <strong>Debes iniciar sesión</strong><br>
                             Para registrar tu asistencia necesitas tener una cuenta y estar autenticado.
                         </div>
                         <div class="d-grid gap-2">
                             <a href="/" onclick="saveReturnUrl()" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar SesiÃ³n
+                                <i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar Sesión
                             </a>
                         </div>
                         <script>
@@ -70,8 +70,8 @@
                         </script>
                         {% elif needs_enrollment %}
                         <div class="alert alert-info" role="alert">
-                            <i class="bi bi-info-circle"></i> <strong>No estÃ¡s inscrito en este evento</strong><br>
-                            Debes inscribirte primero en la pÃ¡gina principal antes de poder registrar asistencia.
+                            <i class="bi bi-info-circle"></i> <strong>No estás inscrito en este evento</strong><br>
+                            Debes inscribirte primero en la página principal antes de poder registrar asistencia.
                         </div>
                         <div class="d-grid gap-2">
                             <a href="/" class="btn btn-primary btn-lg">
@@ -127,7 +127,7 @@
                 if (response.ok) {
                     if (contentArea) contentArea.style.display = 'none';
                     if (autoResult) {
-                        autoResult.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle-fill me-1"></i> <strong>Â¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada âœ…</div>';
+                        autoResult.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle-fill me-1"></i> <strong>¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada ✅.</div>';
                     }
                     return;
                 }
@@ -139,15 +139,15 @@
 
                     if (detail.toLowerCase().includes('inscrito')) {
                         html += '<div class="d-grid gap-2"><a href="/" class="btn btn-primary btn-lg"><i class="bi bi-calendar-plus"></i> Ir a Inscribirme</a></div>';
-                    } else if (detail.toLowerCase().includes('iniciar sesiÃ³n') || response.status === 401) {
-                        html += '<div class="d-grid gap-2"><a href="/" onclick="saveReturnUrl()" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar SesiÃ³n</a></div>';
+                    } else if (detail.toLowerCase().includes('iniciar sesión') || response.status === 401) {
+                        html += '<div class="d-grid gap-2"><a href="/" onclick="saveReturnUrl()" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar Sesión</a></div>';
                     }
                     autoResult.innerHTML = html;
                 }
             } catch (error) {
-                console.error('Error al registrar asistencia automÃ¡ticamente:', error);
+                console.error('Error al registrar asistencia automáticamente:', error);
                 if (autoResult) {
-                    autoResult.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexiÃ³n. Intenta nuevamente.</div>';
+                    autoResult.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexión. Intenta nuevamente.</div>';
                     autoResult.style.display = 'block';
                 }
             }
@@ -160,7 +160,7 @@
             }
             
             if (!authToken) {
-                alert('Debes iniciar sesiÃ³n para registrar asistencia. Redirigiendo...');
+                alert('Debes iniciar sesión para registrar asistencia. Redirigiendo...');
                 window.location.href = '/';
                 return;
             }
@@ -190,7 +190,7 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    resultMessage.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> <strong>Â¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada âœ…</div>';
+                    resultMessage.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> <strong>¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada ✅.</div>';
                     resultMessage.style.display = 'block';
                     
                     if (btn) {
@@ -208,7 +208,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                resultMessage.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexiÃ³n. Verifica tu conexiÃ³n a internet.</div>';
+                resultMessage.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexión. Verifica tu conexión a internet.</div>';
                 resultMessage.style.display = 'block';
                 btn.disabled = false;
                 btn.innerHTML = '<i class="bi bi-check-circle"></i> Registrar Asistencia';

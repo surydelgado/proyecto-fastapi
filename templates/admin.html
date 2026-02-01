@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de AdministraciÃ³n - Sistema de Eventos AcadÃ©micos</title>
+    <title>Panel de Administración - Sistema de Eventos Académicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,13 +30,13 @@
     </style>
 </head>
 <body>
-    <!-- Barra de NavegaciÃ³n Institucional -->
+    <!-- Barra de Navegación Institucional -->
     <nav class="navbar navbar-expand-lg navbar-institutional">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo-puce.png" alt="PUCE ManabÃ­" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
                 <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
-                <span>Eventos AcadÃ©micos</span>
+                <span>Eventos Académicos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@
                                 <i class="bi bi-house-door"></i> Ir al sitio
                             </a>
                             <button class="btn btn-nav" onclick="logout()">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar SesiÃ³n
+                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                             </button>
                         </div>
                     </li>
@@ -64,7 +64,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <h2 class="mb-3">
-                    <i class="bi bi-shield-check"></i> Panel de AdministraciÃ³n
+                    <i class="bi bi-shield-check"></i> Panel de Administración
                 </h2>
                 <ul class="nav nav-pills admin-nav" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -96,12 +96,12 @@
             </div>
         </div>
 
-        <!-- SecciÃ³n de eventos pendientes -->
+        <!-- Sección de eventos pendientes -->
         <div id="pendingEventsSection">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-clock-history"></i> Eventos Pendientes de AprobaciÃ³n
+                        <i class="bi bi-clock-history"></i> Eventos Pendientes de Aprobación
                     </h5>
                 </div>
                 <div class="card-body">
@@ -116,12 +116,12 @@
             </div>
         </div>
 
-        <!-- SecciÃ³n para publicar evento -->
+        <!-- Sección para publicar evento -->
         <div id="publishEventSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-plus-circle"></i> Publicar Evento AcadÃ©mico
+                        <i class="bi bi-plus-circle"></i> Publicar Evento Académico
                     </h5>
                 </div>
                 <div class="card-body">
@@ -129,7 +129,7 @@
                     <form id="publishEventForm">
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label for="publishTitle" class="form-label">TÃ­tulo del Evento <span class="text-danger">*</span></label>
+                                <label for="publishTitle" class="form-label">Título del Evento <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="publishTitle" name="title" required minlength="3" maxlength="150">
                             </div>
                             <div class="col-md-4 mb-3">
@@ -141,7 +141,7 @@
                                     <option value="Taller">Taller</option>
                                     <option value="Congreso">Congreso</option>
                                     <option value="Simposio">Simposio</option>
-                                    <option value="Jornada AcadÃ©mica">Jornada AcadÃ©mica</option>
+                                    <option value="Jornada Académica">Jornada Académica</option>
                                     <option value="Charla">Charla</option>
                                     <option value="Otro">Otro</option>
                                 </select>
@@ -151,7 +151,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="publishAudience" class="form-label">Acceso</label>
                                 <select class="form-control" id="publishAudience" name="audience" onchange="toggleInteruniversityFields()">
-                                    <option value="publico">Abierto al pÃºblico</option>
+                                    <option value="publico">Abierto al público</option>
                                     <option value="interno">Solo PUCE</option>
                                     <option value="interuniversitario">Interuniversitario</option>
                                 </select>
@@ -168,11 +168,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="publishAccessNote" class="form-label">Nota de acceso (opcional)</label>
-                                <textarea class="form-control" id="publishAccessNote" name="access_note" rows="2" maxlength="500" placeholder="VÃ¡lido para PUCE y universidades invitadas"></textarea>
+                                <textarea class="form-control" id="publishAccessNote" name="access_note" rows="2" maxlength="500" placeholder="Válido para PUCE y universidades invitadas"></textarea>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="publishDescription" class="form-label">DescripciÃ³n <span class="text-danger">*</span></label>
+                            <label for="publishDescription" class="form-label">Descripción <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="publishDescription" name="description" rows="4" maxlength="2000" required></textarea>
                         </div>
                         <div class="mb-3 border rounded-3 p-3">
@@ -183,15 +183,15 @@
                             <div id="publishCertificateFields" style="display: none;">
                                 <div class="row g-2">
                                     <div class="col-md-12">
-                                        <label class="form-label">TÃ­tulo del certificado</label>
+                                        <label class="form-label">Título del certificado</label>
                                         <input type="text" class="form-control" id="publishCertificateTitle" placeholder="Certificado de Asistencia">
-                                        <small class="text-muted">Plantilla institucional Ãºnica.</small>
+                                        <small class="text-muted">Plantilla institucional única.</small>
                                     </div>
                                 </div>
                                 <div class="row g-2 mt-1">
                                     <div class="col-md-6">
                                         <label class="form-label">Nombre del firmante</label>
-                                        <input type="text" class="form-control" id="publishCertificateSignerName" placeholder="Ej: Dr. Juan PÃ©rez">
+                                        <input type="text" class="form-control" id="publishCertificateSignerName" placeholder="Ej: Dr. Juan Pérez">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Cargo del firmante</label>
@@ -202,7 +202,7 @@
                                     <div class="col-md-12">
                                         <label class="form-label">Firma institucional (opcional)</label>
                                         <input type="file" class="form-control" id="publishSignerImage" accept="image/png,image/jpeg,image/webp">
-                                        <small class="text-muted">Se usarÃ¡ para la firma autorizada.</small>
+                                        <small class="text-muted">Se usará para la firma autorizada.</small>
                                     </div>
                                 </div>
                                 <div class="border rounded-3 p-2 mt-2">
@@ -241,7 +241,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="publishLocation" class="form-label">UbicaciÃ³n</label>
+                                <label for="publishLocation" class="form-label">Ubicación</label>
                                 <input type="text" class="form-control" id="publishLocation" name="location" maxlength="200">
                             </div>
                             <div class="col-md-6 mb-3">
@@ -267,7 +267,7 @@
             </div>
         </div>
 
-        <!-- SecciÃ³n QR de asistencia (eventos aprobados con botÃ³n Ver QR) -->
+        <!-- Sección QR de asistencia (eventos aprobados con botón Ver QR) -->
         <div id="qrSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
@@ -276,7 +276,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Elige un evento aprobado y pulsa "Ver QR" para mostrar el cÃ³digo que los asistentes escanean para registrarse.</p>
+                    <p class="text-muted">Elige un evento aprobado y pulsa "Ver QR" para mostrar el código que los asistentes escanean para registrarse.</p>
                     <div id="qrEventsList" class="events-list">
                         <div class="text-center py-4">
                             <div class="spinner-border text-primary" role="status"></div>
@@ -286,7 +286,7 @@
             </div>
         </div>
 
-        <!-- SecciÃ³n de asistencias -->
+        <!-- Sección de asistencias -->
         <div id="attendancesSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
@@ -311,8 +311,8 @@
                         <div class="col-12 col-md-6">
                             <label class="form-label small text-muted">Orden</label>
                             <select class="form-select" id="attendancesSort">
-                                <option value="desc">MÃ¡s recientes</option>
-                                <option value="asc">MÃ¡s antiguos</option>
+                                <option value="desc">Más recientes</option>
+                                <option value="asc">Más antiguos</option>
                             </select>
                         </div>
                         <div class="col-12 col-md-6 d-flex align-items-end justify-content-md-end gap-2">
@@ -349,7 +349,7 @@
             </div>
         </div>
 
-        <!-- SecciÃ³n de todos los eventos -->
+        <!-- Sección de todos los eventos -->
         <div id="allEventsSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
@@ -388,7 +388,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="eventDetailsBody">
-                    <!-- Contenido dinÃ¡mico -->
+                    <!-- Contenido dinámico -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -430,8 +430,8 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <select class="form-select" id="attendeeSort">
-                                <option value="desc">MÃ¡s recientes</option>
-                                <option value="asc">MÃ¡s antiguos</option>
+                                <option value="desc">Más recientes</option>
+                                <option value="asc">Más antiguos</option>
                             </select>
                         </div>
                     </div>
@@ -520,7 +520,7 @@
             }
 
             if (currentUser.role !== 'admin') {
-                alert('No tienes permisos para acceder a esta secciÃ³n');
+                alert('No tienes permisos para acceder a esta sección');
                 window.location.href = '/dashboard';
                 return;
             }
@@ -782,7 +782,7 @@
             const container = document.getElementById('qrEventsList');
             if (!container) return;
             if (events.length === 0) {
-                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos aprobados. AprobÃ¡ un evento para generar su QR de asistencia.</div>';
+                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos aprobados. Aprobá un evento para generar su QR de asistencia.</div>';
                 return;
             }
             container.innerHTML = events.map(event => `
@@ -879,7 +879,7 @@
             const container = document.getElementById('pendingEventsList');
             
             if (events.length === 0) {
-                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos pendientes de aprobaciÃ³n.</div>';
+                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos pendientes de aprobación.</div>';
                 return;
             }
 
@@ -1008,8 +1008,8 @@
                         <strong>Acceso:</strong> ${event.audience ? formatAudience(event.audience) : 'No especificado'}
                     </div>
                     <div class="mb-3">
-                        <strong>DescripciÃ³n:</strong>
-                        <p>${escapeHtml(event.description || 'Sin descripciÃ³n')}</p>
+                        <strong>Descripción:</strong>
+                        <p>${escapeHtml(event.description || 'Sin descripción')}</p>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -1023,7 +1023,7 @@
                     </div>
                     ${event.location ? `
                         <div class="mb-3">
-                            <strong>UbicaciÃ³n:</strong> ${escapeHtml(event.location)}
+                            <strong>Ubicación:</strong> ${escapeHtml(event.location)}
                         </div>
                     ` : ''}
                     ${event.capacity ? `
@@ -1036,7 +1036,7 @@
                     </div>
                     <div class="mb-3">
                         <strong>Microcredencial:</strong>
-                        ${event.requires_certificate ? '<span class="badge bg-success">SÃ­</span>' : '<span class="badge bg-secondary">No</span>'}
+                        ${event.requires_certificate ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-secondary">No</span>'}
                     </div>
                     <div class="mb-3">
                         <strong>Creado:</strong> ${formatDate(event.created_at)}
@@ -1391,7 +1391,7 @@
                 }
                 if (resultEl) {
                     resultEl.classList.add('alert-success');
-                    resultEl.textContent = `Emitidas: ${data.issued}, Ya existÃ­an: ${data.existing}, Total asistentes: ${data.total_attendees}`;
+                    resultEl.textContent = `Emitidas: ${data.issued}, Ya existían: ${data.existing}, Total asistentes: ${data.total_attendees}`;
                     resultEl.style.display = 'block';
                 }
                 currentEventAttendeesCount = data.total_attendees || currentEventAttendeesCount;
@@ -1407,7 +1407,7 @@
         }
 
         async function approveEventById(eventId) {
-            if (!confirm('Â¿EstÃ¡s seguro de que deseas aprobar este evento?')) {
+            if (!confirm('¿Estás seguro de que deseas aprobar este evento?')) {
                 return;
             }
 
@@ -1440,7 +1440,7 @@
         }
 
         async function rejectEventById(eventId) {
-            if (!confirm('Â¿EstÃ¡s seguro de que deseas rechazar este evento?')) {
+            if (!confirm('¿Estás seguro de que deseas rechazar este evento?')) {
                 return;
             }
 
@@ -1474,7 +1474,7 @@
 
         async function changeEventStatusById(eventId, newStatus) {
             const statusText = newStatus === 'approved' ? 'aprobado' : 'finalizado';
-            if (!confirm(`Â¿EstÃ¡s seguro de que deseas cambiar el estado del evento a "${statusText}"?`)) {
+            if (!confirm(`¿Estás seguro de que deseas cambiar el estado del evento a "${statusText}"?`)) {
                 return;
             }
 
@@ -1529,7 +1529,7 @@
         function formatAudience(audience) {
             if (!audience) return '';
             const labels = {
-                'publico': 'Abierto al pÃºblico',
+                'publico': 'Abierto al público',
                 'interno': 'Solo PUCE',
                 'interuniversitario': 'Interuniversitario'
             };

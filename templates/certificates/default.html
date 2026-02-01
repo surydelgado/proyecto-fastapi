@@ -236,8 +236,8 @@
                 {% endif %}
             </div>
             <div class="university">
-                <span>Pontificia Universidad CatÃ³lica del Ecuador</span>
-                <span class="unit">Sede ManabÃ­ Â· Eventos AcadÃ©micos</span>
+                <span>Pontificia Universidad Católica del Ecuador</span>
+                <span class="unit">Sede Manabí · Eventos Académicos</span>
             </div>
         </div>
 
@@ -246,12 +246,12 @@
         <div class="content">
             <div class="participant">{{ full_name }}</div>
             {% if cedula %}
-                <div class="cedula">CÃ©dula: {{ cedula }}</div>
+                <div class="cedula">Cédula: {{ cedula }}</div>
             {% endif %}
             <p class="body-text">
-                La Pontificia Universidad CatÃ³lica del Ecuador, Sede ManabÃ­, certifica que
-                la persona antes mencionada ha participado en el evento acadÃ©mico titulado
-                â€œ<em>{{ event_title }}</em>â€
+                La Pontificia Universidad Católica del Ecuador, Sede Manabí, certifica que
+                la persona antes mencionada ha participado en el evento académico titulado
+                “<em>{{ event_title }}</em>”
                 {% if event_type %} ({{ event_type }}){% endif %},
                 {% if is_long_form %}
                     realizado del {{ event_start_date }} al {{ event_end_date }}
@@ -259,17 +259,17 @@
                     realizado el {{ event_start_date }}
                 {% endif %}
                 {% if location %} en {{ location }}{% endif %},
-                con una duraciÃ³n de {{ duration_hours }} horas.
+                con una duración de {{ duration_hours }} horas.
             </p>
         </div>
 
         <div class="event-details">
             <div>
-                <div class="label">Evento acadÃ©mico</div>
+                <div class="label">Evento académico</div>
                 <div class="value">{{ event_title }}</div>
             </div>
             <div>
-                <div class="label">Fecha de realizaciÃ³n</div>
+                <div class="label">Fecha de realización</div>
                 <div class="value">
                     {% if is_long_form %}
                         {{ event_start_date }} al {{ event_end_date }}
@@ -283,16 +283,16 @@
                 <div class="value">{{ location or ' ' }}</div>
             </div>
             <div>
-                <div class="label">DuraciÃ³n</div>
+                <div class="label">Duración</div>
                 <div class="value">{{ duration_hours }} horas</div>
             </div>
             <div>
-                <div class="label">Fecha de emisiÃ³n</div>
+                <div class="label">Fecha de emisión</div>
                 <div class="value">{{ issued_date }} {% if issued_time %}a las {{ issued_time }}{% endif %}</div>
             </div>
             <div>
                 <div class="label">Tipo</div>
-                <div class="value">{{ event_type or 'Evento acadÃ©mico' }}</div>
+                <div class="value">{{ event_type or 'Evento académico' }}</div>
             </div>
         </div>
 
@@ -308,7 +308,7 @@
                 {% if signer_role %}
                     <div class="signature-role">{{ signer_role }}</div>
                 {% endif %}
-                <div class="signature-unit">PUCE ManabÃ­</div>
+                <div class="signature-unit">PUCE Manabí</div>
             </div>
             <div class="signature-block">
                 {% if professor_signer_image_url %}
@@ -321,7 +321,7 @@
                 {% if professor_signer_role %}
                     <div class="signature-role">{{ professor_signer_role }}</div>
                 {% endif %}
-                <div class="signature-unit">PUCE ManabÃ­</div>
+                <div class="signature-unit">PUCE Manabí</div>
             </div>
         </div>
     </div>
@@ -330,10 +330,10 @@
         <div class="verification-page">
             <div>
                 <div class="university">
-                    <span>Pontificia Universidad CatÃ³lica del Ecuador</span>
-                    <span class="unit">Sede ManabÃ­ Â· Eventos AcadÃ©micos</span>
+                    <span>Pontificia Universidad Católica del Ecuador</span>
+                    <span class="unit">Sede Manabí · Eventos Académicos</span>
                 </div>
-                <h2>VerificaciÃ³n PÃºblica</h2>
+                <h2>Verificación Pública</h2>
             </div>
             <div class="verification-qr">
                 {% if qr_data_uri %}
@@ -341,15 +341,15 @@
                 {% endif %}
             </div>
             <div class="verification-meta">
-                <div><strong>CÃ³digo:</strong> {{ credential_code }}</div>
+                <div><strong>Código:</strong> {{ credential_code }}</div>
                 {% if folio %}
                     <div><strong>Folio:</strong> {{ folio }}</div>
                 {% endif %}
                 <div class="verification-url">{{ verify_url }}</div>
             </div>
             <div class="verification-note">
-                La presente microcredencial puede validarse de manera pÃºblica mediante el
-                cÃ³digo QR o el enlace de verificaciÃ³n indicado.
+                La presente microcredencial puede validarse de manera pública mediante el
+                código QR o el enlace de verificación indicado.
             </div>
         </div>
     </div>

@@ -35,14 +35,14 @@
                                 <input type="text" class="form-control" id="names" name="names" required maxlength="300" placeholder="Ej. Juan Carlos">
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo electrÃ³nico</label>
+                                <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" class="form-control" id="email" name="email" maxlength="200" placeholder="correo@ejemplo.com">
                             </div>
                             <div class="mb-3">
-                                <label for="cedula" class="form-label">CÃ©dula</label>
+                                <label for="cedula" class="form-label">Cédula</label>
                                 <input type="text" class="form-control" id="cedula" name="cedula" maxlength="50" placeholder="Ej. 1234567890">
                             </div>
-                            <p class="small text-muted">Indica al menos correo o cÃ©dula.</p>
+                            <p class="small text-muted">Indica al menos correo o cédula.</p>
                             <button type="submit" class="btn btn-primary w-100" id="btnSubmit">
                                 <i class="bi bi-check-circle"></i> Registrar asistencia
                             </button>
@@ -75,7 +75,7 @@
                     return;
                 }
                 if (!email && !cedula) {
-                    resultMessage.innerHTML = '<div class="alert alert-warning">Indica correo o cÃ©dula.</div>';
+                    resultMessage.innerHTML = '<div class="alert alert-warning">Indica correo o cédula.</div>';
                     resultMessage.style.display = 'block';
                     return;
                 }
@@ -88,7 +88,7 @@
                     });
                     var data = await res.json().catch(function() { return {}; });
                     if (res.ok && data.success) {
-                        resultMessage.innerHTML = '<div class="alert alert-success">Asistencia registrada âœ…</div>';
+                        resultMessage.innerHTML = '<div class="alert alert-success">Asistencia registrada ✅.</div>';
                         form.reset();
                         document.getElementById('token').value = token;
                     } else if (data.duplicate || (data.message && data.message.indexOf('Ya registrado') !== -1)) {
@@ -98,7 +98,7 @@
                     }
                     resultMessage.style.display = 'block';
                 } catch (err) {
-                    resultMessage.innerHTML = '<div class="alert alert-danger">Error de conexiÃ³n.</div>';
+                    resultMessage.innerHTML = '<div class="alert alert-danger">Error de conexión.</div>';
                     resultMessage.style.display = 'block';
                 }
                 btnSubmit.disabled = false;
