@@ -1,26 +1,26 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Eventos Académicos - PUCE Manabí</title>
+    <title>Sistema de GestiÃ³n de Eventos AcadÃ©micos - PUCE ManabÃ­</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts - Tipografía limpia y profesional -->
+    <!-- Google Fonts - TipografÃ­a limpia y profesional -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Estilos CSS Institucionales -->
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <!-- Barra de Navegación Institucional -->
+    <!-- Barra de NavegaciÃ³n Institucional -->
     <nav class="navbar navbar-expand-lg navbar-institutional">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <img src="/static/images/logo-puce.png" alt="PUCE ManabÃ­" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
                 <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
-                <span>Eventos Académicos</span>
+                <span>Eventos AcadÃ©micos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,9 +28,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" id="navAdminItem" style="display: none;">
+                        <a class="btn btn-nav me-2" href="/admin">
+                            <i class="bi bi-shield-check"></i> Ir al panel admin
+                        </a>
+                    </li>
+                    <li class="nav-item" id="navDashboardItem" style="display: none;">
+                        <a class="btn btn-nav me-2" href="/dashboard">
+                            <i class="bi bi-speedometer2"></i> Mi dashboard
+                        </a>
+                    </li>
                     <li class="nav-item" id="navLoginItem">
                         <button class="btn btn-nav" onclick="showAuthModal('login')">
-                            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar SesiÃ³n
                         </button>
                     </li>
                     <li class="nav-item" id="navRegisterItem">
@@ -42,7 +52,7 @@
                         <div class="nav-user-info">
                             <span class="nav-user-name" id="navUserName"></span>
                             <button class="btn btn-nav" onclick="logout()">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                <i class="bi bi-box-arrow-right"></i> Cerrar SesiÃ³n
                             </button>
                         </div>
                     </li>
@@ -51,11 +61,11 @@
         </div>
     </nav>
 
-    <!-- Carrusel de Eventos Académicos -->
+    <!-- Carrusel de Eventos AcadÃ©micos -->
     <div id="carouselContainer" class="carousel-container">
         <div id="carouselLoading" class="carousel-loading" style="display: none;">
             <div class="spinner-border text-light" role="status">
-                <span class="visually-hidden">Cargando imágenes...</span>
+                <span class="visually-hidden">Cargando imÃ¡genes...</span>
             </div>
         </div>
         <div id="eventCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
@@ -66,8 +76,8 @@
                     <div class="carousel-image-wrapper" style="background: linear-gradient(135deg, var(--puce-blue) 0%, var(--puce-blue-dark) 100%);">
                         <div class="carousel-overlay" style="background: rgba(0, 51, 102, 0.7);"></div>
                         <div class="carousel-caption">
-                            <h3>Eventos Académicos</h3>
-                            <p>PUCE Manabí - Formación integral y excelencia académica</p>
+                            <h3>Eventos AcadÃ©micos</h3>
+                            <p>PUCE ManabÃ­ - FormaciÃ³n integral y excelencia acadÃ©mica</p>
                         </div>
                     </div>
                 </div>
@@ -83,45 +93,20 @@
         </div>
     </div>
 
-    <!-- Galería de Eventos Académicos -->
     <div class="container">
-        <div class="gallery-section">
-            <div class="page-header">
-                <h2>Galería de Eventos</h2>
-                <p class="page-subtitle">Momentos destacados de nuestros eventos académicos</p>
-            </div>
-            
-            <div id="galleryLoading" class="gallery-loading" style="display: none;">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Cargando galería...</span>
-                </div>
-            </div>
-            
-            <div id="galleryGrid" class="gallery-grid">
-                <!-- Las imágenes se cargarán aquí dinámicamente -->
-            </div>
-            
-            <div id="galleryEmpty" class="gallery-empty" style="display: none;">
-                <i class="bi bi-images" style="font-size: 3rem; opacity: 0.3;"></i>
-                <p class="mt-3">No hay imágenes disponibles en la galería</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- Sección de Autenticación (Modal) -->
+        <!-- SecciÃ³n de AutenticaciÃ³n (Modal) -->
         <div class="modal fade" id="authModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: var(--puce-blue); color: white;">
-                        <h5 class="modal-title">Autenticación</h5>
+                        <h5 class="modal-title">AutenticaciÃ³n</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <ul class="nav nav-tabs auth-tabs" role="tablist">
                             <li class="nav-item">
                                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#loginTab">
-                                    Iniciar Sesión
+                                    Iniciar SesiÃ³n
                                 </button>
                             </li>
                             <li class="nav-item">
@@ -138,11 +123,16 @@
                                         <input type="email" class="form-control" id="loginEmail" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="loginPassword" class="form-label">Contraseña</label>
-                                        <input type="password" class="form-control" id="loginPassword" required>
+                                        <label for="loginPassword" class="form-label">ContraseÃ±a</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="loginPassword" required>
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle-password="loginPassword" aria-label="Mostrar contraseÃ±a">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">
-                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar SesiÃ³n
                                     </button>
                                 </form>
                             </div>
@@ -157,33 +147,38 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="registerSurnames" class="form-label">Apellidos <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="registerSurnames" required 
-                                                   minlength="2" maxlength="100" placeholder="Ej: Pérez González">
+                                                   minlength="2" maxlength="100" placeholder="Ej: PÃ©rez GonzÃ¡lez">
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="registerCedula" class="form-label">Cédula <span class="text-danger">*</span></label>
+                                        <label for="registerCedula" class="form-label">CÃ©dula <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="registerCedula" required 
                                                minlength="10" maxlength="20" placeholder="Ej: 1234567890"
-                                               pattern="[0-9]+" title="Solo números">
+                                               pattern="[0-9]+" title="Solo nÃºmeros">
                                     </div>
                                     <div class="mb-3">
                                         <label for="registerEmail" class="form-label">Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="registerEmail" required 
                                                placeholder="usuario@pucesm.edu.ec o correo@ejemplo.com">
                                         <small class="form-text text-muted">
-                                            Si tu email termina en @pucesm.edu.ec, se asignará el rol "interno". 
-                                            De lo contrario, se asignará el rol "externo".
+                                            Si tu email termina en @pucesm.edu.ec, se asignarÃ¡ el rol "interno". 
+                                            De lo contrario, se asignarÃ¡ el rol "externo".
                                         </small>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="registerPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="registerPassword" required 
-                                               minlength="8" placeholder="Mínimo 8 caracteres">
+                                        <label for="registerPassword" class="form-label">ContraseÃ±a <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="registerPassword" required 
+                                                   minlength="8" placeholder="MÃ­nimo 8 caracteres">
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle-password="registerPassword" aria-label="Mostrar contraseÃ±a">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="alert alert-info" role="alert">
                                         <i class="bi bi-info-circle"></i> 
-                                        <small>Después del registro, recibirás un email de verificación. 
-                                        Debes verificar tu correo antes de poder iniciar sesión.</small>
+                                        <small>DespuÃ©s del registro, recibirÃ¡s un email de verificaciÃ³n. 
+                                        Debes verificar tu correo antes de poder iniciar sesiÃ³n.</small>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">
                                         <i class="bi bi-person-plus"></i> Registrarse
@@ -199,16 +194,16 @@
         <!-- Formulario para proponer evento (Docentes) -->
         <div class="form-section" id="eventFormSection" style="display: none;">
             <h3>
-                <i class="bi bi-file-earmark-plus"></i> Proponer Nuevo Evento Académico
+                <i class="bi bi-file-earmark-plus"></i> Proponer Nuevo Evento AcadÃ©mico
             </h3>
             <div class="alert alert-info" role="alert">
                 <i class="bi bi-info-circle"></i> 
-                <small>Tu propuesta será revisada por el administrador. Una vez aprobada, podrás agregar una imagen de portada.</small>
+                <small>Tu propuesta serÃ¡ revisada por el administrador. Una vez aprobada, podrÃ¡s agregar una imagen de portada.</small>
             </div>
             <form id="eventForm">
                 <div class="row">
                     <div class="col-md-8 mb-3">
-                        <label for="title" class="form-label">Título del Evento <span class="text-danger">*</span></label>
+                        <label for="title" class="form-label">TÃ­tulo del Evento <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="title" name="title" required 
                                minlength="3" maxlength="150" placeholder="Ej: Conferencia de Inteligencia Artificial">
                     </div>
@@ -221,16 +216,16 @@
                             <option value="Taller">Taller</option>
                             <option value="Congreso">Congreso</option>
                             <option value="Simposio">Simposio</option>
-                            <option value="Jornada Académica">Jornada Académica</option>
+                            <option value="Jornada AcadÃ©mica">Jornada AcadÃ©mica</option>
                             <option value="Charla">Charla</option>
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Descripción <span class="text-danger">*</span></label>
+                    <label for="description" class="form-label">DescripciÃ³n <span class="text-danger">*</span></label>
                     <textarea class="form-control" id="description" name="description" rows="4" 
-                              maxlength="2000" placeholder="Descripción detallada del evento, objetivos, público objetivo, etc." required></textarea>
+                              maxlength="2000" placeholder="DescripciÃ³n detallada del evento, objetivos, pÃºblico objetivo, etc." required></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -244,14 +239,14 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="location" class="form-label">Ubicación</label>
+                        <label for="location" class="form-label">UbicaciÃ³n</label>
                         <input type="text" class="form-control" id="location" name="location" 
                                maxlength="200" placeholder="Ej: Auditorio Principal, Aula 101">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="capacity" class="form-label">Capacidad</label>
                         <input type="number" class="form-control" id="capacity" name="capacity" 
-                               min="1" placeholder="Número máximo de participantes">
+                               min="1" placeholder="NÃºmero mÃ¡ximo de participantes">
                     </div>
                 </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -265,12 +260,12 @@
             </form>
         </div>
 
-        <!-- Lista de eventos aprobados para inscripción -->
+        <!-- Lista de eventos aprobados para inscripciÃ³n -->
         <div class="events-section">
             <!-- Page Header - Dashboard Style -->
             <div class="page-header">
                 <h2>Eventos Disponibles</h2>
-                <p class="page-subtitle">Inscríbete a los eventos académicos aprobados</p>
+                <p class="page-subtitle">InscrÃ­bete a los eventos acadÃ©micos aprobados</p>
             </div>
             
             <div class="d-flex justify-content-end mb-3">
@@ -291,18 +286,42 @@
 
             <!-- Lista de eventos aprobados -->
             <div id="approvedEventsList" class="row">
-                <!-- Los eventos se cargarán aquí dinámicamente -->
+                <!-- Los eventos se cargarÃ¡n aquÃ­ dinÃ¡micamente -->
             </div>
 
-            <!-- Estado vacío -->
+            <!-- Estado vacÃ­o -->
             <div id="approvedEventsEmpty" class="empty-state" style="display: none;">
                 <i class="bi bi-calendar-x" style="font-size: 4rem; opacity: 0.3;"></i>
                 <h4 class="mt-3">No hay eventos disponibles</h4>
-                <p>No hay eventos aprobados disponibles para inscripción en este momento.</p>
+                <p>No hay eventos aprobados disponibles para inscripciÃ³n en este momento.</p>
             </div>
         </div>
     </div>
 
+    <!-- GalerÃ­a de Eventos AcadÃ©micos -->
+    <div class="container">
+        <div class="gallery-section">
+            <div class="page-header">
+                <h2>GalerÃ­a de Eventos</h2>
+                <p class="page-subtitle">Momentos destacados de nuestros eventos acadÃ©micos</p>
+            </div>
+            
+            <div id="galleryLoading" class="gallery-loading" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Cargando galerÃ­a...</span>
+                </div>
+            </div>
+            
+            <div id="galleryGrid" class="gallery-grid">
+                <!-- Las imÃ¡genes se cargarÃ¡n aquÃ­ dinÃ¡micamente -->
+            </div>
+            
+            <div id="galleryEmpty" class="gallery-empty" style="display: none;">
+                <i class="bi bi-images" style="font-size: 3rem; opacity: 0.3;"></i>
+                <p class="mt-3">No hay imÃ¡genes disponibles en la galerÃ­a</p>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -311,21 +330,42 @@
         const AUTH_BASE_URL = '/auth';
         let authToken = localStorage.getItem('authToken');
         let currentUser = null;
+        let currentUserRole = null;
+        let eventsById = {};
 
-        // Verificar autenticación al cargar
+        // Arranque de la vista pública
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             loadApprovedEvents();
             loadCarouselImages();
             loadGalleryImages();
+            bindPasswordToggles();
         });
 
-        // Funciones de autenticación
+        // Mostrar/ocultar contraseña en formularios
+        function bindPasswordToggles() {
+            document.querySelectorAll('[data-toggle-password]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const inputId = button.getAttribute('data-toggle-password');
+                    const input = document.getElementById(inputId);
+                    if (!input) return;
+                    const icon = button.querySelector('i');
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    if (icon) {
+                        icon.classList.toggle('bi-eye', !isPassword);
+                        icon.classList.toggle('bi-eye-slash', isPassword);
+                    }
+                    button.setAttribute('aria-label', isPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a');
+                });
+            });
+        }
+
+        // Abre el modal y selecciona la pestaña indicada
         function showAuthModal(tab = 'login') {
             const modal = new bootstrap.Modal(document.getElementById('authModal'));
             modal.show();
             
-            // Cambiar a la pestaña especificada
             if (tab === 'register') {
                 const registerTab = document.querySelector('#registerTab');
                 const registerTabButton = document.querySelector('button[data-bs-target="#registerTab"]');
@@ -341,16 +381,15 @@
             }
         }
 
+        // Inicio de sesión
         async function login(email, password) {
             try {
-                // Limpiar mensajes de error previos
                 const errorElement = document.getElementById('loginError');
                 if (errorElement) {
                     errorElement.textContent = '';
                     errorElement.style.display = 'none';
                 }
 
-                // Validación básica
                 if (!email || !password) {
                     showLoginError('Por favor completa todos los campos');
                     return;
@@ -369,11 +408,10 @@
 
                 if (!response.ok) {
                     const error = await response.json();
-                    const errorMessage = error.detail || 'Error al iniciar sesión';
+                    const errorMessage = error.detail || 'Error al iniciar sesiÃ³n';
                     
-                    // Mensajes de error específicos y claros
                     if (response.status === 401) {
-                        showLoginError('Credenciales inválidas. Verifica tu email y contraseña.');
+                        showLoginError('Credenciales invÃ¡lidas. Verifica tu email y contraseÃ±a.');
                     } else if (response.status === 403) {
                         showLoginError(errorMessage);
                     } else {
@@ -386,17 +424,13 @@
                 authToken = data.access_token;
                 currentUser = data.user;
                 
-                // Guardar en localStorage
                 localStorage.setItem('authToken', authToken);
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
-                // Cerrar modal
                 bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
                 
-                // Limpiar formulario
                 document.getElementById('loginForm').reset();
                 
-                // Redirigir según el rol
                 const role = currentUser.role || 'externo';
                 
                 if (role === 'admin') {
@@ -404,18 +438,16 @@
                 } else if (role === 'interno' || role === 'externo') {
                     window.location.href = '/dashboard';
                 } else {
-                    // Rol no reconocido, redirigir al dashboard por defecto
                     window.location.href = '/dashboard';
                 }
                 
             } catch (error) {
                 console.error('Error en login:', error);
-                showLoginError('Error de conexión. Por favor intenta nuevamente.');
+                showLoginError('Error de conexiÃ³n. Por favor intenta nuevamente.');
             }
         }
 
         function showLoginError(message) {
-            // Crear o actualizar elemento de error
             let errorElement = document.getElementById('loginError');
             if (!errorElement) {
                 errorElement = document.createElement('div');
@@ -429,36 +461,32 @@
             errorElement.textContent = message;
             errorElement.style.display = 'block';
             
-            // Ocultar después de 5 segundos
             setTimeout(() => {
                 errorElement.style.display = 'none';
             }, 5000);
         }
 
+        // Registro de usuario
         async function register(names, surnames, cedula, email, password) {
             try {
-                // Limpiar mensajes de error previos
                 const errorElement = document.getElementById('registerError');
                 if (errorElement) {
                     errorElement.textContent = '';
                     errorElement.style.display = 'none';
                 }
 
-                // Validación básica
                 if (!names || !surnames || !cedula || !email || !password) {
                     showRegisterError('Por favor completa todos los campos requeridos');
                     return;
                 }
 
-                // Validar formato de cédula
                 if (!/^\d+$/.test(cedula)) {
-                    showRegisterError('La cédula debe contener solo números');
+                    showRegisterError('La cÃ©dula debe contener solo nÃºmeros');
                     return;
                 }
 
-                // Validar longitud de contraseña
                 if (password.length < 8) {
-                    showRegisterError('La contraseña debe tener al menos 8 caracteres');
+                    showRegisterError('La contraseÃ±a debe tener al menos 8 caracteres');
                     return;
                 }
 
@@ -490,22 +518,18 @@
 
                 const data = await response.json();
                 
-                // Cerrar el modal
                 bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
                 
-                // Limpiar el formulario
                 document.getElementById('registerForm').reset();
                 
-                // Mostrar mensaje de éxito
-                showAlert(data.message || 'Registro exitoso. Por favor verifica tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada (y la carpeta de spam).', 'success');
+                showAlert(data.message || 'Registro exitoso. Por favor verifica tu correo electrÃ³nico antes de iniciar sesiÃ³n. Revisa tu bandeja de entrada (y la carpeta de spam).', 'success');
             } catch (error) {
                 console.error('Error en registro:', error);
-                showRegisterError('Error de conexión. Por favor intenta nuevamente.');
+                showRegisterError('Error de conexiÃ³n. Por favor intenta nuevamente.');
             }
         }
 
         function showRegisterError(message) {
-            // Crear o actualizar elemento de error
             let errorElement = document.getElementById('registerError');
             if (!errorElement) {
                 errorElement = document.createElement('div');
@@ -519,7 +543,6 @@
             errorElement.textContent = message;
             errorElement.style.display = 'block';
             
-            // Ocultar después de 5 segundos
             setTimeout(() => {
                 errorElement.style.display = 'none';
             }, 5000);
@@ -531,10 +554,11 @@
             localStorage.removeItem('authToken');
             localStorage.removeItem('currentUser');
             checkAuth();
-            showAlert('Sesión cerrada', 'info');
+            showAlert('SesiÃ³n cerrada', 'info');
             loadApprovedEvents();
         }
 
+        // Estado de sesión y rol en navbar
         async function checkAuth() {
             const storedUser = localStorage.getItem('currentUser');
             if (storedUser) {
@@ -542,15 +566,12 @@
             }
 
             if (authToken && currentUser) {
-                // Mostrar información del usuario en la navbar
                 document.getElementById('navUserInfo').style.display = 'block';
                 document.getElementById('navLoginItem').style.display = 'none';
                 document.getElementById('navRegisterItem').style.display = 'none';
                 
-                // Obtener el rol del usuario (puede estar en diferentes lugares)
                 let userRole = currentUser.role || currentUser.user_metadata?.role || 'student';
                 
-                // Si no tenemos el rol, intentar obtenerlo del servidor
                 if (!userRole || userRole === 'student') {
                     try {
                         const response = await fetch('/users/me', {
@@ -567,12 +588,12 @@
                     }
                 }
                 
-                // Mostrar formulario solo para docentes (teacher) o admin
-                if (userRole === 'teacher' || userRole === 'admin') {
-                    document.getElementById('eventFormSection').style.display = 'block';
-                } else {
-                    document.getElementById('eventFormSection').style.display = 'none';
-                }
+                document.getElementById('eventFormSection').style.display = 'none';
+                
+                currentUserRole = userRole;
+
+                document.getElementById('navAdminItem').style.display = userRole === 'admin' ? 'block' : 'none';
+                document.getElementById('navDashboardItem').style.display = userRole !== 'admin' ? 'block' : 'none';
                 
                 const userName = (currentUser.names && currentUser.surnames)
                     ? `${currentUser.names} ${currentUser.surnames}`
@@ -581,15 +602,16 @@
                     : currentUser.email;
                 document.getElementById('navUserName').textContent = userName;
             } else {
-                // Mostrar botones de login/registro
                 document.getElementById('navUserInfo').style.display = 'none';
                 document.getElementById('navLoginItem').style.display = 'block';
                 document.getElementById('navRegisterItem').style.display = 'block';
                 document.getElementById('eventFormSection').style.display = 'none';
+                document.getElementById('navAdminItem').style.display = 'none';
+                document.getElementById('navDashboardItem').style.display = 'none';
+                currentUserRole = null;
             }
         }
 
-        // Formularios de autenticación
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -605,27 +627,24 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
             
-            // Validación básica
             if (!names || !surnames || !cedula || !email || !password) {
                 showAlert('Por favor completa todos los campos requeridos', 'warning');
                 return;
             }
             
-            // Validar formato de cédula (solo números)
             if (!/^\d+$/.test(cedula)) {
-                showAlert('La cédula debe contener solo números', 'warning');
+                showAlert('La cÃ©dula debe contener solo nÃºmeros', 'warning');
                 return;
             }
             
             await register(names, surnames, cedula, email, password);
         });
 
-        // Manejar el envío del formulario de eventos
         document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!authToken) {
-                showAlert('Debes iniciar sesión para crear eventos', 'warning');
+                showAlert('Debes iniciar sesiÃ³n para crear eventos', 'warning');
                 showAuthModal();
                 return;
             }
@@ -641,7 +660,6 @@
                 capacity: formData.get('capacity') ? parseInt(formData.get('capacity')) : null
             };
 
-            // Convertir fechas a formato ISO
             if (eventData.start_date) {
                 eventData.start_date = new Date(eventData.start_date).toISOString();
             }
@@ -662,7 +680,7 @@
                 if (!response.ok) {
                     if (response.status === 401) {
                         logout();
-                        showAlert('Sesión expirada. Por favor inicia sesión nuevamente', 'warning');
+                        showAlert('SesiÃ³n expirada. Por favor inicia sesiÃ³n nuevamente', 'warning');
                         return;
                     }
                     const errorData = await response.json();
@@ -670,7 +688,7 @@
                 }
 
                 const newEvent = await response.json();
-                showAlert('Propuesta de evento enviada exitosamente. Será revisada por el administrador.', 'success');
+                showAlert('Propuesta de evento enviada exitosamente. SerÃ¡ revisada por el administrador.', 'success');
                 e.target.reset();
                 loadApprovedEvents();
             } catch (error) {
@@ -678,14 +696,10 @@
             }
         });
 
-        // Cargar lista de eventos
         async function loadEvents() {
-            // Compatibilidad: esta vista no tiene la lista general de eventos.
-            // Usamos la carga de eventos aprobados para evitar errores de DOM.
             await loadApprovedEvents();
         }
 
-        // Crear tarjeta de evento
         function createEventCard(event) {
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
@@ -719,7 +733,7 @@
                         ${event.location ? `
                             <div class="mt-2">
                                 <small class="text-muted">
-                                    <i class="bi bi-geo-alt"></i> <strong>Ubicación:</strong> ${escapeHtml(event.location)}
+                                    <i class="bi bi-geo-alt"></i> <strong>UbicaciÃ³n:</strong> ${escapeHtml(event.location)}
                                 </small>
                             </div>
                         ` : ''}
@@ -735,8 +749,7 @@
             `;
         }
 
-        // Formatear fecha y hora
-        // Cargar eventos aprobados para inscripción
+        // Lista de eventos aprobados para inscripción
         async function loadApprovedEvents() {
             const loadingEl = document.getElementById('approvedEventsLoading');
             const eventsListEl = document.getElementById('approvedEventsList');
@@ -765,7 +778,6 @@
                     return;
                 }
 
-                // Cargar estado de inscripción para cada evento si el usuario está autenticado
                 const eventsWithEnrollment = await Promise.all(events.map(async (event) => {
                     if (authToken) {
                         try {
@@ -780,12 +792,17 @@
                                 event.attended = enrollment.attended;
                             }
                         } catch (e) {
-                            // Si falla, simplemente no mostrar el estado de inscripción
                         }
                     }
                     return event;
                 }));
 
+                eventsById = {};
+                eventsWithEnrollment.forEach(event => {
+                    if (event && event.id != null) {
+                        eventsById[event.id] = event;
+                    }
+                });
                 eventsListEl.innerHTML = eventsWithEnrollment.map(event => createApprovedEventCard(event)).join('');
             } catch (error) {
                 loadingEl.style.display = 'none';
@@ -796,16 +813,21 @@
             }
         }
 
-        // Crear tarjeta de evento aprobado
+        // Card de evento aprobado
         function createApprovedEventCard(event) {
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
             const formattedStart = formatDateTime(startDate);
             const formattedEnd = formatDateTime(endDate);
             const isPast = endDate < new Date();
+            const coverImage = event.cover_image_url
+                ? `<img src="${escapeHtml(event.cover_image_url)}" class="card-img-top event-cover-image" alt="Portada del evento" onerror="this.style.display='none'">`
+                : '';
             
             let enrollButton = '';
-            if (authToken) {
+            if (currentUserRole === 'admin') {
+                enrollButton = '';
+            } else if (authToken) {
                 if (event.enrolled) {
                     enrollButton = `
                         <button class="btn btn-success btn-sm" disabled>
@@ -822,16 +844,23 @@
             } else {
                 enrollButton = `
                     <button class="btn btn-outline-primary btn-sm" onclick="showAuthModal('login')">
-                        <i class="bi bi-box-arrow-in-right"></i> Inicia sesión para inscribirte
+                        <i class="bi bi-box-arrow-in-right"></i> Inicia sesiÃ³n para inscribirte
                     </button>
                 `;
             }
 
             const capacityInfo = event.capacity ? `<small class="text-muted"><i class="bi bi-people"></i> Capacidad: ${event.capacity}</small>` : '';
 
+            const detailsButton = `
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="showEventDetails(${event.id})">
+                    <i class="bi bi-eye"></i> MÃ¡s detalles
+                </button>
+            `;
+
             return `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card event-card h-100">
+                        ${coverImage}
                         <div class="card-body">
                             <h5 class="card-title">${escapeHtml(event.title)}</h5>
                             ${event.event_type ? `<span class="badge bg-secondary mb-2">${escapeHtml(event.event_type)}</span>` : ''}
@@ -842,17 +871,87 @@
                                 ${capacityInfo}
                             </p>
                             ${event.description ? `<p class="card-text">${escapeHtml(event.description.substring(0, 150))}${event.description.length > 150 ? '...' : ''}</p>` : ''}
+                            ${detailsButton}
                         </div>
+                        ${(enrollButton || isPast) ? `
                         <div class="card-footer bg-transparent">
                             ${enrollButton}
                             ${isPast ? '<span class="badge bg-secondary ms-2">Finalizado</span>' : ''}
                         </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
         }
 
-        // Inscribirse a un evento
+        // Modal público de detalles
+        function showEventDetails(eventId) {
+            const cachedEvent = eventsById[eventId];
+            if (cachedEvent) {
+                renderEventDetails(cachedEvent);
+                return;
+            }
+
+            fetch(`${API_BASE_URL}/${eventId}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('No se pudo cargar el detalle del evento');
+                    return res.json();
+                })
+                .then(event => renderEventDetails(event))
+                .catch(err => {
+                    showAlert('Error al cargar detalles: ' + err.message, 'danger');
+                });
+        }
+
+        window.showEventDetails = showEventDetails;
+
+        function renderEventDetails(event) {
+            const modalEl = document.getElementById('publicEventDetailsModal');
+            const titleEl = document.getElementById('publicEventDetailsTitle');
+            const bodyEl = document.getElementById('publicEventDetailsBody');
+            if (!modalEl || !titleEl || !bodyEl) return;
+
+            const startDate = event.start_date ? formatDateTime(new Date(event.start_date)) : 'No especificada';
+            const endDate = event.end_date ? formatDateTime(new Date(event.end_date)) : 'No especificada';
+            titleEl.textContent = event.title ? event.title : 'Detalle del evento';
+            bodyEl.innerHTML = `
+                <div class="mb-2"><strong>DescripciÃ³n:</strong></div>
+                <p class="text-muted">${escapeHtml(event.description || 'Sin descripciÃ³n')}</p>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <strong><i class="bi bi-calendar-event"></i> Inicio:</strong><br>
+                        ${startDate}
+                    </div>
+                    <div class="col-6 mb-2">
+                        <strong><i class="bi bi-calendar-check"></i> Fin:</strong><br>
+                        ${endDate}
+                    </div>
+                </div>
+                ${event.location ? `
+                    <div class="mb-2">
+                        <strong><i class="bi bi-geo-alt"></i> UbicaciÃ³n:</strong>
+                        ${escapeHtml(event.location)}
+                    </div>
+                ` : ''}
+                ${event.audience ? `
+                    <div class="mb-2">
+                        <strong><i class="bi bi-people"></i> Acceso:</strong>
+                        ${escapeHtml(event.audience)}
+                    </div>
+                ` : ''}
+                ${event.capacity ? `
+                    <div class="mb-2">
+                        <strong><i class="bi bi-people-fill"></i> Capacidad:</strong>
+                        ${event.capacity} participantes
+                    </div>
+                ` : ''}
+            `;
+
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        // Inscripción a evento
         async function enrollToEvent(eventId) {
             if (!authToken) {
                 showAuthModal('login');
@@ -876,11 +975,11 @@
                     if (response.status === 401) {
                         if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-person-plus"></i> Inscribirse'; }
                         logout();
-                        showAlert('Sesión expirada. Por favor inicia sesión nuevamente', 'warning');
+                        showAlert('SesiÃ³n expirada. Por favor inicia sesiÃ³n nuevamente', 'warning');
                         return;
                     }
                     if (response.status === 409) {
-                        showAlert('Ya estás inscrito en este evento', 'info');
+                        showAlert('Ya estÃ¡s inscrito en este evento', 'info');
                         await loadApprovedEvents();
                         return;
                     }
@@ -918,14 +1017,12 @@
             return date.toLocaleDateString('es-EC', options);
         }
 
-        // Escapar HTML para prevenir XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Mostrar alerta
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
@@ -943,7 +1040,6 @@
             }, 5000);
         }
 
-        // Cargar imágenes del carrusel
         async function loadCarouselImages() {
             const carouselLoading = document.getElementById('carouselLoading');
             const carouselContainer = document.getElementById('carouselContainer');
@@ -952,12 +1048,11 @@
             const carouselIndicators = document.getElementById('carouselIndicators');
             
             try {
-                console.log('Cargando imágenes del carrusel...');
+                console.log('Cargando imÃ¡genes del carrusel...');
                 const response = await fetch('/api/carousel-images');
                 
                 if (!response.ok) {
-                    console.error('Error al obtener imágenes:', response.status, response.statusText);
-                    // Mantener el slide por defecto que ya está visible
+                    console.error('Error al obtener imÃ¡genes:', response.status, response.statusText);
                     return;
                 }
                 
@@ -969,27 +1064,23 @@
                 }
                 
                 if (!data.images || data.images.length === 0) {
-                    // Si no hay imágenes, mantener el slide por defecto que ya está visible
-                    console.log('No hay imágenes disponibles en el carrusel');
+                    console.log('No hay imÃ¡genes disponibles en el carrusel');
                     if (data.error) {
-                        console.warn('Error al obtener imágenes:', data.error);
+                        console.warn('Error al obtener imÃ¡genes:', data.error);
                         console.warn('Verifica que:');
                         console.warn('1. El bucket "eventos" existe en Supabase Storage');
-                        console.warn('2. El bucket está configurado como público');
-                        console.warn('3. Hay imágenes (jpg, png, etc.) dentro del bucket "eventos"');
+                        console.warn('2. El bucket estÃ¡ configurado como pÃºblico');
+                        console.warn('3. Hay imÃ¡genes (jpg, png, etc.) dentro del bucket "eventos"');
                     }
                     return;
                 }
                 
-                console.log(`Cargando ${data.images.length} imágenes en el carrusel`);
+                console.log(`Cargando ${data.images.length} imÃ¡genes en el carrusel`);
                 
-                // Limpiar contenido previo
                 carouselInner.innerHTML = '';
                 carouselIndicators.innerHTML = '';
                 
-                // Crear slides e indicadores
                 data.images.forEach((image, index) => {
-                    // Indicador
                     const indicator = document.createElement('button');
                     indicator.type = 'button';
                     indicator.setAttribute('data-bs-target', '#eventCarousel');
@@ -1001,7 +1092,6 @@
                     indicator.setAttribute('aria-label', `Slide ${index + 1}`);
                     carouselIndicators.appendChild(indicator);
                     
-                    // Slide
                     const slide = document.createElement('div');
                     slide.className = 'carousel-item';
                     if (index === 0) {
@@ -1012,13 +1102,13 @@
                         <div class="carousel-image-wrapper">
                             <img src="${escapeHtml(image.url)}" 
                                  class="d-block w-100 carousel-image" 
-                                 alt="Evento Académico PUCE Manabí"
+                                 alt="Evento AcadÃ©mico PUCE ManabÃ­"
                                  loading="lazy"
                                  onerror="console.error('Error al cargar imagen:', '${escapeHtml(image.url)}');">
                             <div class="carousel-overlay"></div>
                             <div class="carousel-caption">
-                                <h3>Eventos Académicos</h3>
-                                <p>PUCE Manabí - Formación integral y excelencia académica</p>
+                                <h3>Eventos AcadÃ©micos</h3>
+                                <p>PUCE ManabÃ­ - FormaciÃ³n integral y excelencia acadÃ©mica</p>
                             </div>
                         </div>
                     `;
@@ -1026,7 +1116,6 @@
                     carouselInner.appendChild(slide);
                 });
                 
-                // Reinicializar el carrusel de Bootstrap
                 if (eventCarousel && data.images.length > 0) {
                     const carousel = new bootstrap.Carousel(eventCarousel, {
                         interval: 5000,
@@ -1035,12 +1124,10 @@
                     });
                 }
             } catch (error) {
-                console.error('Error al cargar imágenes del carrusel:', error);
-                // Mantener el slide por defecto visible
+                console.error('Error al cargar imÃ¡genes del carrusel:', error);
             }
         }
 
-        // Cargar imágenes de la galería
         async function loadGalleryImages() {
             const galleryLoading = document.getElementById('galleryLoading');
             const galleryGrid = document.getElementById('galleryGrid');
@@ -1054,7 +1141,7 @@
                 const response = await fetch('/api/carousel-images');
                 
                 if (!response.ok) {
-                    throw new Error('Error al obtener imágenes');
+                    throw new Error('Error al obtener imÃ¡genes');
                 }
                 
                 const data = await response.json();
@@ -1065,7 +1152,6 @@
                     return;
                 }
                 
-                // Crear elementos de la galería
                 data.images.forEach((image) => {
                     const galleryItem = document.createElement('div');
                     galleryItem.className = 'gallery-item';
@@ -1073,14 +1159,14 @@
                     galleryItem.innerHTML = `
                         <div class="gallery-item-wrapper">
                             <img src="${escapeHtml(image.url)}" 
-                                 alt="Evento Académico PUCE Manabí"
+                                 alt="Evento AcadÃ©mico PUCE ManabÃ­"
                                  class="gallery-image"
                                  loading="lazy"
                                  onerror="this.parentElement.parentElement.style.display='none';">
                             <div class="gallery-item-overlay">
                                 <div class="gallery-item-info">
                                     <i class="bi bi-calendar-event"></i>
-                                    <span>Evento Académico</span>
+                                    <span>Evento AcadÃ©mico</span>
                                 </div>
                             </div>
                         </div>
@@ -1089,11 +1175,29 @@
                     galleryGrid.appendChild(galleryItem);
                 });
             } catch (error) {
-                console.error('Error al cargar imágenes de la galería:', error);
+                console.error('Error al cargar imÃ¡genes de la galerÃ­a:', error);
                 galleryLoading.style.display = 'none';
                 galleryEmpty.style.display = 'block';
             }
         }
     </script>
+
+    <!-- Modal de detalles del evento (pÃºblico) -->
+    <div class="modal fade" id="publicEventDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="publicEventDetailsTitle">Detalle del evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="publicEventDetailsBody">
+                    <!-- Contenido dinÃ¡mico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

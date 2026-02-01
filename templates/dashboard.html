@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Eventos Académicos</title>
+    <title>Dashboard - Sistema de Eventos AcadÃ©micos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,13 +11,13 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <!-- Barra de Navegación Institucional -->
+    <!-- Barra de NavegaciÃ³n Institucional -->
     <nav class="navbar navbar-expand-lg navbar-institutional">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <img src="/static/images/logo-puce.png" alt="PUCE ManabÃ­" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
                 <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
-                <span>Eventos Académicos</span>
+                <span>Eventos AcadÃ©micos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,7 @@
                         <div class="nav-user-info">
                             <span class="nav-user-name" id="userName"></span>
                             <button class="btn btn-nav" onclick="logout()">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                <i class="bi bi-box-arrow-right"></i> Cerrar SesiÃ³n
                             </button>
                         </div>
                     </li>
@@ -49,44 +49,180 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Bienvenido</h5>
-                        <p class="card-text">Esta es tu área de trabajo. Aquí podrás gestionar tus eventos y asistencias.</p>
+                        <p class="card-text">Esta es tu Ã¡rea de trabajo. AquÃ­ podrÃ¡s gestionar tus eventos y asistencias.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Mis Eventos Propuestos -->
-        <div class="row mb-4">
+        <!-- Tabs docentes -->
+        <div class="row mb-4" id="teacherTabsSection" style="display: none;">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Mis Eventos Propuestos</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="myEventsLoading" class="text-center py-3">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
+                <ul class="nav nav-pills mb-3" id="teacherTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="teacher-events-tab" data-bs-toggle="pill" data-bs-target="#teacher-events" type="button" role="tab">
+                            <i class="bi bi-calendar-event"></i> Mis eventos
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="teacher-propose-tab" data-bs-toggle="pill" data-bs-target="#teacher-propose" type="button" role="tab">
+                            <i class="bi bi-plus-circle"></i> Proponer evento
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="teacher-attendance-tab" data-bs-toggle="pill" data-bs-target="#teacher-attendance" type="button" role="tab">
+                            <i class="bi bi-check-circle"></i> Mis asistencias
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="teacherTabsContent">
+                    <div class="tab-pane fade show active" id="teacher-events" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Mis Eventos Propuestos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="myEventsLoading" class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </div>
+                                <div id="myEventsList">
+                                    <!-- Los eventos se cargarÃ¡n aquÃ­ -->
+                                </div>
                             </div>
                         </div>
-                        <div id="myEventsList">
-                            <!-- Los eventos se cargarán aquí -->
+                    </div>
+                    <div class="tab-pane fade" id="teacher-propose" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-plus-circle"></i> Proponer evento</h5>
+                                <div class="alert alert-info" role="alert">
+                                    <i class="bi bi-info-circle"></i>
+                                    <small>Tu propuesta serÃ¡ revisada por el administrador. Una vez aprobada, podrÃ¡s agregar una imagen de portada.</small>
+                                </div>
+                                <form id="teacherEventForm">
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label for="teacherTitle" class="form-label">TÃ­tulo del Evento <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="teacherTitle" name="title" required minlength="3" maxlength="150"
+                                                   placeholder="Ej: Conferencia de Inteligencia Artificial">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="teacherEventType" class="form-label">Tipo de Evento</label>
+                                            <select class="form-control" id="teacherEventType" name="event_type">
+                                                <option value="">Seleccione un tipo</option>
+                                                <option value="Conferencia">Conferencia</option>
+                                                <option value="Seminario">Seminario</option>
+                                                <option value="Taller">Taller</option>
+                                                <option value="Congreso">Congreso</option>
+                                                <option value="Simposio">Simposio</option>
+                                                <option value="Jornada AcadÃ©mica">Jornada AcadÃ©mica</option>
+                                                <option value="Charla">Charla</option>
+                                                <option value="Otro">Otro</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="teacherAudience" class="form-label">Acceso</label>
+                                            <select class="form-control" id="teacherAudience" name="audience">
+                                                <option value="publico">Abierto al pÃºblico</option>
+                                                <option value="interno">Solo PUCE</option>
+                                                <option value="interuniversitario">Interuniversitario</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 border rounded-3 p-3">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="teacherRequiresCertificate">
+                                            <label class="form-check-label" for="teacherRequiresCertificate">Requiere microcredencial</label>
+                                        </div>
+                                        <div id="teacherCertificateFields" style="display: none;">
+                                            <label for="teacherCertificateTitle" class="form-label">TÃ­tulo del certificado (opcional)</label>
+                                            <input type="text" class="form-control" id="teacherCertificateTitle" placeholder="Certificado de Asistencia">
+                                            <div class="form-check form-switch mt-2 mb-2">
+                                                <input class="form-check-input" type="checkbox" id="teacherRequiresProfessorSignature">
+                                                <label class="form-check-label" for="teacherRequiresProfessorSignature">Requiere firma del profesor/ponente</label>
+                                            </div>
+                                            <div id="teacherProfessorFields" style="display: none;">
+                                                <div class="row g-2">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Nombre del profesor/ponente</label>
+                                                        <input type="text" class="form-control" id="teacherProfessorSignerName" placeholder="Ej: Mgtr. Ana Ruiz">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Cargo del profesor/ponente</label>
+                                                        <input type="text" class="form-control" id="teacherProfessorSignerRole" placeholder="Ej: Ponente invitado">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacherDescription" class="form-label">DescripciÃ³n <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="teacherDescription" name="description" rows="4" maxlength="2000"
+                                                  placeholder="DescripciÃ³n detallada del evento, objetivos, pÃºblico objetivo, etc." required></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacherStartDate" class="form-label">Fecha y Hora de Inicio <span class="text-danger">*</span></label>
+                                            <input type="datetime-local" class="form-control" id="teacherStartDate" name="start_date" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacherEndDate" class="form-label">Fecha y Hora de Fin <span class="text-danger">*</span></label>
+                                            <input type="datetime-local" class="form-control" id="teacherEndDate" name="end_date" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacherLocation" class="form-label">UbicaciÃ³n</label>
+                                            <input type="text" class="form-control" id="teacherLocation" name="location" maxlength="200"
+                                                   placeholder="Ej: Auditorio Principal, Aula 101">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="teacherCapacity" class="form-label">Capacidad</label>
+                                            <input type="number" class="form-control" id="teacherCapacity" name="capacity" min="1"
+                                                   placeholder="NÃºmero mÃ¡ximo de participantes">
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="reset" class="btn btn-outline-secondary">
+                                            <i class="bi bi-x-circle"></i> Limpiar
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-send"></i> Enviar Propuesta
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="teacher-attendance" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-check-circle"></i> Mis Asistencias</h5>
+                                <p class="card-text">Consulta tu historial de asistencias a eventos.</p>
+                                <button class="btn btn-primary" onclick="viewAttendances()">Ver Asistencias</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-4">
+        <div class="row" id="dashboardActionsRow">
+            <div class="col-md-6 mb-4" id="availableEventsCard">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><i class="bi bi-calendar-event"></i> Eventos Disponibles</h5>
-                        <p class="card-text">Inscríbete a eventos académicos aprobados.</p>
+                        <p class="card-text">InscrÃ­bete a eventos acadÃ©micos aprobados.</p>
                         <a href="/" class="btn btn-primary">Ver Eventos</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-4" id="attendancesCard">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><i class="bi bi-check-circle"></i> Mis Asistencias</h5>
@@ -97,27 +233,90 @@
             </div>
         </div>
 
-        <!-- Modal para editar descripción -->
+        <div class="row" id="credentialsRow">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-award"></i> Mis microcredenciales</h5>
+                        <p class="card-text">Descarga y verifica tus certificados emitidos.</p>
+                        <button class="btn btn-primary" onclick="viewCredentials()">Ver credenciales</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para editar descripciÃ³n -->
         <div class="modal fade" id="editDescriptionModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Editar Descripción del Evento</h5>
+                        <h5 class="modal-title">Editar DescripciÃ³n del Evento</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <form id="editDescriptionForm">
                             <input type="hidden" id="editEventId">
                             <div class="mb-3">
-                                <label for="editDescription" class="form-label">Descripción</label>
+                                <label for="editDescription" class="form-label">DescripciÃ³n</label>
                                 <textarea class="form-control" id="editDescription" rows="5" maxlength="2000" required></textarea>
-                                <small class="form-text text-muted">Puedes agregar o actualizar la descripción del evento ahora que está aprobado.</small>
+                                <small class="form-text text-muted">Puedes agregar o actualizar la descripciÃ³n del evento ahora que estÃ¡ aprobado.</small>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="saveDescription()">Guardar Descripción</button>
+                        <button type="button" class="btn btn-primary" onclick="saveDescription()">Guardar DescripciÃ³n</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para ver asistencias -->
+        <div class="modal fade" id="attendancesModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mis Asistencias</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="attendancesLoading" class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <div id="attendancesList"></div>
+                        <div id="attendancesEmpty" class="text-muted" style="display: none;">
+                            No tienes asistencias registradas todavÃ­a.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="credentialsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mis microcredenciales</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="credentialsLoading" class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <div id="credentialsList"></div>
+                        <div id="credentialsEmpty" class="text-muted" style="display: none;">
+                            No tienes credenciales emitidas todavÃ­a.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -129,38 +328,72 @@
         const AUTH_BASE_URL = '/auth';
         let authToken = localStorage.getItem('authToken');
         let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        let currentUserRole = null;
 
-        // Verificar autenticación al cargar
+        // Arranque del dashboard
         document.addEventListener('DOMContentLoaded', async function() {
             if (!authToken || !currentUser.id) {
                 window.location.href = '/';
                 return;
             }
 
-            // Verificar que el rol sea válido para dashboard
             const role = currentUser.role || 'externo';
+            currentUserRole = role;
+            // Admin va directo a su panel
             if (role === 'admin') {
-                // Si es admin, redirigir al panel de admin
                 window.location.href = '/admin';
                 return;
             }
 
-            if (role !== 'interno' && role !== 'externo') {
-                // Rol no válido, redirigir al inicio
+            // Roles permitidos en dashboard
+            if (role !== 'interno' && role !== 'externo' && role !== 'teacher') {
                 window.location.href = '/';
                 return;
             }
 
-            // Mostrar nombre del usuario
             const userName = currentUser.names && currentUser.surnames
                 ? `${currentUser.names} ${currentUser.surnames}`
                 : currentUser.email;
             document.getElementById('userName').textContent = userName;
 
-            // Cargar eventos del usuario
-            loadMyEvents();
+            const teacherTabsSection = document.getElementById('teacherTabsSection');
+            const dashboardActionsRow = document.getElementById('dashboardActionsRow');
+            const credentialsRow = document.getElementById('credentialsRow');
+
+            // Vista docente
+            if (role === 'teacher') {
+                if (teacherTabsSection) teacherTabsSection.style.display = 'block';
+                if (dashboardActionsRow) dashboardActionsRow.style.display = 'none';
+                if (credentialsRow) credentialsRow.style.display = 'flex';
+                loadMyEvents();
+                document.getElementById('teacherRequiresCertificate')?.addEventListener('change', toggleTeacherCertificateFields);
+                document.getElementById('teacherRequiresProfessorSignature')?.addEventListener('change', toggleTeacherProfessorFields);
+                toggleTeacherCertificateFields();
+            } else {
+                // Vista estudiante/externo
+                if (teacherTabsSection) teacherTabsSection.style.display = 'none';
+                if (dashboardActionsRow) dashboardActionsRow.style.display = 'flex';
+                if (credentialsRow) credentialsRow.style.display = 'flex';
+            }
         });
 
+        function toggleTeacherCertificateFields() {
+            const enabled = document.getElementById('teacherRequiresCertificate')?.checked;
+            const fields = document.getElementById('teacherCertificateFields');
+            if (!fields) return;
+            fields.style.display = enabled ? 'block' : 'none';
+            toggleTeacherProfessorFields();
+        }
+
+        function toggleTeacherProfessorFields() {
+            const requiresCert = document.getElementById('teacherRequiresCertificate')?.checked;
+            const requiresProfessor = document.getElementById('teacherRequiresProfessorSignature')?.checked;
+            const fields = document.getElementById('teacherProfessorFields');
+            if (!fields) return;
+            fields.style.display = requiresCert && requiresProfessor ? 'block' : 'none';
+        }
+
+        // Eventos propuestos por el docente
         async function loadMyEvents() {
             const loadingEl = document.getElementById('myEventsLoading');
             const eventsListEl = document.getElementById('myEventsList');
@@ -180,13 +413,12 @@
 
                 const allEvents = await response.json();
                 
-                // Filtrar solo los eventos del usuario actual
                 const myEvents = allEvents.filter(event => event.creator_id === currentUser.id);
                 
                 loadingEl.style.display = 'none';
 
                 if (myEvents.length === 0) {
-                    eventsListEl.innerHTML = '<p class="text-muted">No has propuesto ningún evento aún.</p>';
+                    eventsListEl.innerHTML = '<p class="text-muted">No has propuesto ningÃºn evento aÃºn.</p>';
                     return;
                 }
 
@@ -195,6 +427,75 @@
                 loadingEl.style.display = 'none';
                 eventsListEl.innerHTML = `<div class="alert alert-danger">Error al cargar eventos: ${error.message}</div>`;
             }
+        }
+
+        const teacherEventForm = document.getElementById('teacherEventForm');
+        // Envío de propuesta docente
+        if (teacherEventForm) {
+            teacherEventForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!authToken) {
+                    alert('Debes iniciar sesiÃ³n para crear eventos');
+                    return;
+                }
+
+                const formData = new FormData(e.target);
+                const requiresCertificate = document.getElementById('teacherRequiresCertificate')?.checked || false;
+                const certificateTitle = document.getElementById('teacherCertificateTitle')?.value || null;
+                const requiresProfessorSignature = document.getElementById('teacherRequiresProfessorSignature')?.checked || false;
+                const professorSignerName = document.getElementById('teacherProfessorSignerName')?.value || null;
+                const professorSignerRole = document.getElementById('teacherProfessorSignerRole')?.value || null;
+                const eventData = {
+                    title: formData.get('title'),
+                    description: formData.get('description') || null,
+                    event_type: formData.get('event_type') || null,
+                    audience: formData.get('audience') || 'publico',
+                    location: formData.get('location') || null,
+                    start_date: formData.get('start_date'),
+                    end_date: formData.get('end_date'),
+                    capacity: formData.get('capacity') ? parseInt(formData.get('capacity'), 10) : null,
+                    requires_certificate: requiresCertificate,
+                    certificate_title: requiresCertificate ? (certificateTitle || 'Certificado de Asistencia') : null,
+                    certificate_template: 'default',
+                    requires_professor_signature: requiresCertificate ? requiresProfessorSignature : false,
+                    certificate_professor_signer_name: requiresCertificate ? professorSignerName : null,
+                    certificate_professor_signer_role: requiresCertificate ? professorSignerRole : null
+                };
+
+                if (eventData.start_date) {
+                    eventData.start_date = new Date(eventData.start_date).toISOString();
+                }
+                if (eventData.end_date) {
+                    eventData.end_date = new Date(eventData.end_date).toISOString();
+                }
+
+                try {
+                    const response = await fetch('/events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(eventData)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            logout();
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Error al crear el evento');
+                    }
+
+                    alert('Propuesta enviada exitosamente. SerÃ¡ revisada por el administrador.');
+                    e.target.reset();
+                    loadMyEvents();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
         }
 
         function createMyEventCard(event) {
@@ -214,14 +515,61 @@
                 'finalized': '<span class="badge bg-info">Finalizado</span>'
             };
 
-            const statusBadge = statusBadges[event.status] || '<span class="badge bg-secondary">Desconocido</span>';
+            const normalizedStatus = (event.status || 'pending').toLowerCase();
+            const statusBadge = statusBadges[normalizedStatus] || '<span class="badge bg-secondary">Desconocido</span>';
 
             let editButton = '';
-            if (event.status === 'approved') {
+            if (normalizedStatus === 'approved') {
                 editButton = `
                     <button class="btn btn-sm btn-outline-primary" onclick="editDescription(${event.id}, '${escapeHtml(event.description || '')}')">
-                        <i class="bi bi-pencil"></i> Editar Descripción
+                        <i class="bi bi-pencil"></i> Editar DescripciÃ³n
                     </button>
+                `;
+            }
+
+            const coverImage = event.cover_image_url
+                ? `<img src="${event.cover_image_url}" class="img-fluid rounded mb-2" alt="Portada del evento" onerror="this.style.display='none'">`
+                : '';
+
+            let coverUpload = '';
+            if (currentUserRole === 'teacher' && normalizedStatus === 'approved') {
+                coverUpload = `
+                    <div class="mt-2">
+                        <label class="form-label mb-1 small">Portada del evento</label>
+                        <div class="d-flex gap-2">
+                            <input type="file" class="form-control form-control-sm" id="coverImageInput-${event.id}" accept="image/png,image/jpeg,image/webp">
+                            <button class="btn btn-sm btn-outline-success" onclick="uploadCoverImage(${event.id})">
+                                <i class="bi bi-upload"></i> Subir
+                            </button>
+                        </div>
+                        <small class="text-muted">Solo imÃ¡genes JPG, PNG o WebP.</small>
+                    </div>
+                `;
+            }
+
+            let professorSignatureSection = '';
+            if (currentUserRole === 'teacher' && event.requires_certificate && event.requires_professor_signature) {
+                professorSignatureSection = `
+                    <div class="mt-3">
+                        <label class="form-label mb-1 small">Firma del profesor/ponente</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control form-control-sm" id="professorSignerName-${event.id}"
+                                       placeholder="Nombre" value="${escapeHtml(event.certificate_professor_signer_name || '')}">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control form-control-sm" id="professorSignerRole-${event.id}"
+                                       placeholder="Cargo" value="${escapeHtml(event.certificate_professor_signer_role || '')}">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <input type="file" class="form-control form-control-sm" id="professorSignatureInput-${event.id}" accept="image/png,image/jpeg,image/webp">
+                            <button class="btn btn-sm btn-outline-success" onclick="uploadProfessorSignature(${event.id})">
+                                <i class="bi bi-upload"></i> Subir firma
+                            </button>
+                        </div>
+                        <small class="text-muted">Usa JPG, PNG o WebP.</small>
+                    </div>
                 `;
             }
 
@@ -236,8 +584,14 @@
                             <i class="bi bi-calendar"></i> ${formattedStart}
                             ${event.location ? ` | <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
                         </p>
-                        ${event.description ? `<p class="card-text">${escapeHtml(event.description)}</p>` : '<p class="card-text text-muted"><em>Sin descripción</em></p>'}
+                        <p class="card-text text-muted mb-2">
+                            <i class="bi bi-award"></i> Microcredencial: ${event.requires_certificate ? 'SÃ­' : 'No'}
+                        </p>
+                        ${coverImage}
+                        ${event.description ? `<p class="card-text">${escapeHtml(event.description)}</p>` : '<p class="card-text text-muted"><em>Sin descripciÃ³n</em></p>'}
                         ${editButton}
+                        ${coverUpload}
+                        ${professorSignatureSection}
                     </div>
                 </div>
             `;
@@ -255,7 +609,7 @@
             const description = document.getElementById('editDescription').value;
 
             if (!description.trim()) {
-                alert('La descripción no puede estar vacía');
+                alert('La descripciÃ³n no puede estar vacÃ­a');
                 return;
             }
 
@@ -277,11 +631,87 @@
                         return;
                     }
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Error al actualizar la descripción');
+                    throw new Error(errorData.detail || 'Error al actualizar la descripciÃ³n');
                 }
 
                 bootstrap.Modal.getInstance(document.getElementById('editDescriptionModal')).hide();
-                alert('Descripción actualizada exitosamente');
+                alert('DescripciÃ³n actualizada exitosamente');
+                loadMyEvents();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function uploadCoverImage(eventId) {
+            const input = document.getElementById(`coverImageInput-${eventId}`);
+            if (!input || !input.files || input.files.length === 0) {
+                alert('Selecciona una imagen para subir');
+                return;
+            }
+
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`/events/${eventId}/cover-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error al subir la imagen');
+                }
+
+                alert('Portada actualizada exitosamente');
+                loadMyEvents();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function uploadProfessorSignature(eventId) {
+            const input = document.getElementById(`professorSignatureInput-${eventId}`);
+            const nameInput = document.getElementById(`professorSignerName-${eventId}`);
+            const roleInput = document.getElementById(`professorSignerRole-${eventId}`);
+            if (!input || !input.files || input.files.length === 0) {
+                alert('Selecciona una firma para subir');
+                return;
+            }
+
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            if (nameInput?.value) formData.append('professor_name', nameInput.value.trim());
+            if (roleInput?.value) formData.append('professor_role', roleInput.value.trim());
+
+            try {
+                const response = await fetch(`/events/${eventId}/professor-signature`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Error al subir la firma');
+                }
+
+                alert('Firma del profesor/ponente actualizada');
                 loadMyEvents();
             } catch (error) {
                 alert('Error: ' + error.message);
@@ -302,9 +732,175 @@
         }
 
         function viewAttendances() {
-            // Implementar vista de asistencias
-            alert('Funcionalidad en desarrollo');
+            const modalEl = document.getElementById('attendancesModal');
+            const loadingEl = document.getElementById('attendancesLoading');
+            const listEl = document.getElementById('attendancesList');
+            const emptyEl = document.getElementById('attendancesEmpty');
+
+            if (!modalEl || !loadingEl || !listEl || !emptyEl) return;
+
+            listEl.innerHTML = '';
+            emptyEl.style.display = 'none';
+            loadingEl.style.display = 'block';
+
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+
+            fetch('/attendance/my-attendances', {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('No se pudo cargar asistencias');
+                return res.json();
+            })
+            .then(data => {
+                loadingEl.style.display = 'none';
+                if (!data || data.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+                listEl.innerHTML = data.map(att => {
+                    const title = att.event_title || `Evento #${att.event_id}`;
+                    const start = formatAttendanceDate(att.event_start_date);
+                    const end = formatAttendanceDate(att.event_end_date);
+                    const attended = att.status === 'attended';
+                    const attendedAt = formatAttendanceDate(att.attended_at);
+                    return `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="card-title mb-0">${escapeHtml(title)}</h6>
+                                    <span class="badge ${attended ? 'bg-success' : 'bg-secondary'}">
+                                        ${attended ? 'Asististe' : 'Inscrito'}
+                                    </span>
+                                </div>
+                                <p class="card-text text-muted mb-1">
+                                    ${start ? `<i class="bi bi-calendar"></i> ${start}` : ''}
+                                    ${end ? ` | <i class="bi bi-calendar-check"></i> ${end}` : ''}
+                                </p>
+                                ${att.event_location ? `<p class="card-text text-muted mb-1"><i class="bi bi-geo-alt"></i> ${escapeHtml(att.event_location)}</p>` : ''}
+                                ${attendedAt ? `<small class="text-muted">Asistencia registrada: ${attendedAt}</small>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(err => {
+                loadingEl.style.display = 'none';
+                listEl.innerHTML = `<div class="alert alert-danger">Error al cargar asistencias: ${err.message}</div>`;
+            });
+        }
+
+        function viewCredentials() {
+            const modalEl = document.getElementById('credentialsModal');
+            const loadingEl = document.getElementById('credentialsLoading');
+            const listEl = document.getElementById('credentialsList');
+            const emptyEl = document.getElementById('credentialsEmpty');
+
+            if (!modalEl || !loadingEl || !listEl || !emptyEl) return;
+
+            listEl.innerHTML = '';
+            emptyEl.style.display = 'none';
+            loadingEl.style.display = 'block';
+
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+
+            fetch('/credentials/mine', {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('No se pudo cargar credenciales');
+                return res.json();
+            })
+            .then(data => {
+                loadingEl.style.display = 'none';
+                if (!data || data.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+                listEl.innerHTML = data.map(cred => {
+                    const status = cred.status === 'valid';
+                    const issued = formatAttendanceDate(cred.issued_at);
+                    return `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="card-title mb-0">${escapeHtml(cred.event_title || 'Evento acadÃ©mico')}</h6>
+                                    <span class="badge ${status ? 'bg-success' : 'bg-danger'}">
+                                        ${status ? 'VÃ¡lido' : 'Revocado'}
+                                    </span>
+                                </div>
+                                ${issued ? `<p class="card-text text-muted mb-1"><i class="bi bi-calendar-check"></i> Emitido: ${issued}</p>` : ''}
+                                ${cred.folio ? `<p class="card-text text-muted mb-1"><i class="bi bi-hash"></i> Folio: ${escapeHtml(cred.folio)}</p>` : ''}
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    ${status ? `<button class="btn btn-sm btn-primary" onclick="downloadCredential('${cred.credential_code}', '${escapeHtml(cred.event_title || 'microcredencial')}')"><i class="bi bi-download"></i> Descargar</button>` : ''}
+                                    ${cred.verify_url ? `<a class="btn btn-sm btn-outline-secondary" href="${cred.verify_url}" target="_blank" rel="noopener"><i class="bi bi-shield-check"></i> Verificar</a>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(err => {
+                loadingEl.style.display = 'none';
+                listEl.innerHTML = `<div class="alert alert-danger">Error al cargar credenciales: ${err.message}</div>`;
+            });
+        }
+
+        async function downloadCredential(credentialCode, title) {
+            const token = localStorage.getItem('access_token') || authToken;
+            if (!token) {
+                alert('Inicia sesiÃ³n para descargar tu microcredencial.');
+                return;
+            }
+            try {
+                const response = await fetch(`/credentials/${credentialCode}/download`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        alert('Inicia sesiÃ³n para descargar tu microcredencial.');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        alert('No tienes permisos para descargar esta microcredencial.');
+                        return;
+                    }
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.detail || 'No se pudo descargar el PDF.');
+                }
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const safeTitle = (title || 'microcredencial').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_');
+                link.href = url;
+                link.download = `microcredencial_${safeTitle}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                alert(error.message || 'Error al descargar la microcredencial.');
+            }
+        }
+
+        function formatAttendanceDate(dateValue) {
+            if (!dateValue) return '';
+            const date = new Date(dateValue);
+            if (Number.isNaN(date.getTime())) return '';
+            return date.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
     </script>
 </body>
 </html>
+

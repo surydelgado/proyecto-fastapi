@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Sistema de Eventos Académicos</title>
+    <title>Panel de AdministraciÃ³n - Sistema de Eventos AcadÃ©micos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,16 +13,30 @@
         .admin-card {
             border-left: 4px solid var(--puce-blue);
         }
+        .admin-nav {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .admin-nav .nav-link {
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: var(--puce-blue);
+            background: #ffffff;
+        }
+        .admin-nav .nav-link.active {
+            background: var(--puce-blue);
+            color: #ffffff;
+            border-color: var(--puce-blue);
+        }
     </style>
 </head>
 <body>
-    <!-- Barra de Navegación Institucional -->
+    <!-- Barra de NavegaciÃ³n Institucional -->
     <nav class="navbar navbar-expand-lg navbar-institutional">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/static/images/logo-puce.png" alt="PUCE Manabí" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <img src="/static/images/logo-puce.png" alt="PUCE ManabÃ­" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
                 <i class="bi bi-calendar-event logo-icon" style="display: none;"></i>
-                <span>Eventos Académicos</span>
+                <span>Eventos AcadÃ©micos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,15 +45,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin">
-                            <i class="bi bi-shield-check"></i> Administración
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <div class="nav-user-info">
                             <span class="nav-user-name" id="userName"></span>
+                            <a class="btn btn-nav me-2" href="/">
+                                <i class="bi bi-house-door"></i> Ir al sitio
+                            </a>
                             <button class="btn btn-nav" onclick="logout()">
-                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                <i class="bi bi-box-arrow-right"></i> Cerrar SesiÃ³n
                             </button>
                         </div>
                     </li>
@@ -52,28 +64,44 @@
         <div class="row mb-4">
             <div class="col-12">
                 <h2 class="mb-3">
-                    <i class="bi bi-shield-check"></i> Panel de Administración
+                    <i class="bi bi-shield-check"></i> Panel de AdministraciÃ³n
                 </h2>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary active" id="btnPending" onclick="showPendingEvents()">
-                        <i class="bi bi-clock-history"></i> Eventos Pendientes
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" id="btnAll" onclick="showAllEvents()">
-                        <i class="bi bi-calendar-event"></i> Todos los Eventos
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" id="btnQr" onclick="showQrSection()">
-                        <i class="bi bi-qr-code"></i> QR de asistencia
-                    </button>
-                </div>
+                <ul class="nav nav-pills admin-nav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="btnPending" type="button" onclick="showPendingEvents(this)">
+                            <i class="bi bi-clock-history"></i> Eventos Pendientes
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="btnAll" type="button" onclick="showAllEvents(this)">
+                            <i class="bi bi-calendar-event"></i> Todos los Eventos
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="btnAttendances" type="button" onclick="showAttendancesSection(this)">
+                            <i class="bi bi-people"></i> Asistencias
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="btnPublish" type="button" onclick="showPublishSection(this)">
+                            <i class="bi bi-plus-circle"></i> Publicar Evento
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="btnQr" type="button" onclick="showQrSection(this)">
+                            <i class="bi bi-qr-code"></i> QR de asistencia
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- Sección de eventos pendientes -->
+        <!-- SecciÃ³n de eventos pendientes -->
         <div id="pendingEventsSection">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-clock-history"></i> Eventos Pendientes de Aprobación
+                        <i class="bi bi-clock-history"></i> Eventos Pendientes de AprobaciÃ³n
                     </h5>
                 </div>
                 <div class="card-body">
@@ -88,7 +116,158 @@
             </div>
         </div>
 
-        <!-- Sección QR de asistencia (eventos aprobados con botón Ver QR) -->
+        <!-- SecciÃ³n para publicar evento -->
+        <div id="publishEventSection" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle"></i> Publicar Evento AcadÃ©mico
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="publishAlert" class="alert" style="display: none;"></div>
+                    <form id="publishEventForm">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="publishTitle" class="form-label">TÃ­tulo del Evento <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="publishTitle" name="title" required minlength="3" maxlength="150">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="publishEventType" class="form-label">Tipo de Evento</label>
+                                <select class="form-control" id="publishEventType" name="event_type">
+                                    <option value="">Seleccione un tipo</option>
+                                    <option value="Conferencia">Conferencia</option>
+                                    <option value="Seminario">Seminario</option>
+                                    <option value="Taller">Taller</option>
+                                    <option value="Congreso">Congreso</option>
+                                    <option value="Simposio">Simposio</option>
+                                    <option value="Jornada AcadÃ©mica">Jornada AcadÃ©mica</option>
+                                    <option value="Charla">Charla</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="publishAudience" class="form-label">Acceso</label>
+                                <select class="form-control" id="publishAudience" name="audience" onchange="toggleInteruniversityFields()">
+                                    <option value="publico">Abierto al pÃºblico</option>
+                                    <option value="interno">Solo PUCE</option>
+                                    <option value="interuniversitario">Interuniversitario</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="interuniversityFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="publishAllowedDomains" class="form-label">Dominios permitidos (separados por coma)</label>
+                                <input type="text" class="form-control" id="publishAllowedDomains" name="allowed_domains" placeholder="pucese.edu.ec, utm.edu.ec, uleam.edu.ec">
+                            </div>
+                            <div class="mb-3">
+                                <label for="publishAllowedEmails" class="form-label">Correos permitidos (separados por coma)</label>
+                                <input type="text" class="form-control" id="publishAllowedEmails" name="allowed_emails" placeholder="persona@utm.edu.ec, invitado@uleam.edu.ec">
+                            </div>
+                            <div class="mb-3">
+                                <label for="publishAccessNote" class="form-label">Nota de acceso (opcional)</label>
+                                <textarea class="form-control" id="publishAccessNote" name="access_note" rows="2" maxlength="500" placeholder="VÃ¡lido para PUCE y universidades invitadas"></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="publishDescription" class="form-label">DescripciÃ³n <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="publishDescription" name="description" rows="4" maxlength="2000" required></textarea>
+                        </div>
+                        <div class="mb-3 border rounded-3 p-3">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="publishRequiresCertificate">
+                                <label class="form-check-label" for="publishRequiresCertificate">Requiere microcredencial</label>
+                            </div>
+                            <div id="publishCertificateFields" style="display: none;">
+                                <div class="row g-2">
+                                    <div class="col-md-12">
+                                        <label class="form-label">TÃ­tulo del certificado</label>
+                                        <input type="text" class="form-control" id="publishCertificateTitle" placeholder="Certificado de Asistencia">
+                                        <small class="text-muted">Plantilla institucional Ãºnica.</small>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nombre del firmante</label>
+                                        <input type="text" class="form-control" id="publishCertificateSignerName" placeholder="Ej: Dr. Juan PÃ©rez">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Cargo del firmante</label>
+                                        <input type="text" class="form-control" id="publishCertificateSignerRole" placeholder="Ej: Decano de Facultad">
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-1">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Firma institucional (opcional)</label>
+                                        <input type="file" class="form-control" id="publishSignerImage" accept="image/png,image/jpeg,image/webp">
+                                        <small class="text-muted">Se usarÃ¡ para la firma autorizada.</small>
+                                    </div>
+                                </div>
+                                <div class="border rounded-3 p-2 mt-2">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="publishRequiresProfessorSignature">
+                                        <label class="form-check-label" for="publishRequiresProfessorSignature">Requiere firma del profesor/ponente</label>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nombre del profesor/ponente</label>
+                                            <input type="text" class="form-control" id="publishProfessorSignerName" placeholder="Ej: Mgtr. Ana Ruiz">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Cargo del profesor/ponente</label>
+                                            <input type="text" class="form-control" id="publishProfessorSignerRole" placeholder="Ej: Ponente invitado">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-2 mt-1">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Fondo (URL opcional)</label>
+                                        <input type="text" class="form-control" id="publishCertificateBackgroundUrl" placeholder="https://.../fondo.png">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="publishStartDate" class="form-label">Fecha y Hora de Inicio <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="publishStartDate" name="start_date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="publishEndDate" class="form-label">Fecha y Hora de Fin <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="publishEndDate" name="end_date" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="publishLocation" class="form-label">UbicaciÃ³n</label>
+                                <input type="text" class="form-control" id="publishLocation" name="location" maxlength="200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="publishCapacity" class="form-label">Capacidad</label>
+                                <input type="number" class="form-control" id="publishCapacity" name="capacity" min="1">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="publishCoverImage" class="form-label">Imagen de portada (opcional)</label>
+                            <input type="file" class="form-control" id="publishCoverImage" accept="image/png,image/jpeg,image/webp">
+                            <small class="text-muted">Formatos permitidos: JPG, PNG o WebP.</small>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Limpiar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Publicar Evento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SecciÃ³n QR de asistencia (eventos aprobados con botÃ³n Ver QR) -->
         <div id="qrSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
@@ -97,7 +276,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Elige un evento aprobado y pulsa "Ver QR" para mostrar el código que los asistentes escanean para registrarse.</p>
+                    <p class="text-muted">Elige un evento aprobado y pulsa "Ver QR" para mostrar el cÃ³digo que los asistentes escanean para registrarse.</p>
                     <div id="qrEventsList" class="events-list">
                         <div class="text-center py-4">
                             <div class="spinner-border text-primary" role="status"></div>
@@ -107,7 +286,70 @@
             </div>
         </div>
 
-        <!-- Sección de todos los eventos -->
+        <!-- SecciÃ³n de asistencias -->
+        <div id="attendancesSection" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people"></i> Asistencias
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small text-muted">Selecciona un evento</label>
+                            <select class="form-select" id="attendancesEventSelect">
+                                <option value="">Selecciona un evento...</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small text-muted">Buscar</label>
+                            <input type="text" class="form-control" id="attendancesSearch" placeholder="Buscar por nombre o correo">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small text-muted">Orden</label>
+                            <select class="form-select" id="attendancesSort">
+                                <option value="desc">MÃ¡s recientes</option>
+                                <option value="asc">MÃ¡s antiguos</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 d-flex align-items-end justify-content-md-end gap-2">
+                            <span class="badge bg-primary">Asistencias</span>
+                            <small class="text-muted" id="attendancesCount"></small>
+                        </div>
+                    </div>
+
+                    <div id="attendancesLoading" class="text-center py-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                    <div id="attendancesEmpty" class="alert alert-info" style="display: none;">
+                        Selecciona un evento para ver las asistencias.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped align-middle mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Rol</th>
+                                    <th>Asistencia</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendancesTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-outline-success" id="btnExportAttendancesSection" onclick="exportAttendeesCsv()">
+                            <i class="bi bi-download"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SecciÃ³n de todos los eventos -->
         <div id="allEventsSection" style="display: none;">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
@@ -146,18 +388,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="eventDetailsBody">
-                    <!-- Contenido dinámico -->
+                    <!-- Contenido dinÃ¡mico -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-outline-primary" id="btnShowQr" style="display: none;" onclick="showEventQr(currentEventId)">
-                        <i class="bi bi-qr-code"></i> Ver QR de asistencia
+                    <button type="button" class="btn btn-outline-dark" id="btnShowAttendees" onclick="showEventAttendees()">
+                        <i class="bi bi-people"></i> Ver Asistentes
                     </button>
-                    <button type="button" class="btn btn-danger" id="btnRejectEvent" onclick="rejectEvent()">
-                        <i class="bi bi-x-circle"></i> Rechazar
-                    </button>
-                    <button type="button" class="btn btn-success" id="btnApproveEvent" onclick="approveEvent()">
-                        <i class="bi bi-check-circle"></i> Aprobar
+                    <button type="button" class="btn btn-success" id="btnIssueCredentials" onclick="issueCredentials()" style="display: none;">
+                        <i class="bi bi-award"></i> Emitir credenciales
                     </button>
                     <div class="btn-group" id="statusChangeGroup">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
@@ -167,6 +406,68 @@
                             <li><a class="dropdown-item" href="#" onclick="changeEventStatus('approved')">Aprobado</a></li>
                             <li><a class="dropdown-item" href="#" onclick="changeEventStatus('finalized')">Finalizado</a></li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para asistentes -->
+    <div class="modal fade" id="attendeesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title"><i class="bi bi-people"></i> Asistencias</h5>
+                        <small class="text-muted" id="attendeesEventTitle"></small>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-12 col-md-8">
+                            <input type="text" class="form-control" id="attendeeSearch" placeholder="Buscar por nombre o correo">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <select class="form-select" id="attendeeSort">
+                                <option value="desc">MÃ¡s recientes</option>
+                                <option value="asc">MÃ¡s antiguos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary">Asistencias</span>
+                        <small class="text-muted" id="attendeeCount"></small>
+                    </div>
+                    <div id="attendeesLoading" class="text-center py-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                    <div id="attendeesEmpty" class="alert alert-info" style="display: none;">
+                        No hay asistencias registradas.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped align-middle mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Rol</th>
+                                    <th>Asistencia</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendeesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <small class="text-muted" id="attendeeFooterCount"></small>
+                        <div>
+                            <button type="button" class="btn btn-outline-success" id="btnExportAttendees" onclick="exportAttendeesCsv()">
+                                <i class="bi bi-download"></i> Exportar CSV
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -186,6 +487,14 @@
                     <div id="qrImageContainer"></div>
                     <p id="qrError" class="text-danger small mt-2" style="display: none;"></p>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" id="btnDownloadQr" disabled>
+                        <i class="bi bi-download"></i> Descargar
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnPrintQr" disabled>
+                        <i class="bi bi-printer"></i> Imprimir
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -198,29 +507,46 @@
         let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
         let currentEventId = null;
         let currentEventStatus = null;
+        let currentQrUrl = null;
+        let currentQrTitle = null;
+        let currentEventAttendeesCount = 0;
+        let eventsCache = {};
+        let attendeesCache = {};
 
-        // Verificar autenticación y rol al cargar
         document.addEventListener('DOMContentLoaded', function() {
             if (!authToken || !currentUser.id) {
                 window.location.href = '/';
                 return;
             }
 
-            // Verificar que sea admin
             if (currentUser.role !== 'admin') {
-                alert('No tienes permisos para acceder a esta sección');
+                alert('No tienes permisos para acceder a esta secciÃ³n');
                 window.location.href = '/dashboard';
                 return;
             }
 
-            // Mostrar nombre del usuario
             const userName = currentUser.names && currentUser.surnames
                 ? `${currentUser.names} ${currentUser.surnames}`
                 : currentUser.email;
             document.getElementById('userName').textContent = userName;
 
-            // Cargar eventos pendientes por defecto
             loadPendingEvents();
+            document.getElementById('attendeeSearch')?.addEventListener('input', () => renderAttendees(currentEventId));
+            document.getElementById('attendeeSort')?.addEventListener('change', () => renderAttendees(currentEventId));
+            document.getElementById('attendancesSearch')?.addEventListener('input', () => renderAttendancesSection(currentEventId));
+            document.getElementById('attendancesSort')?.addEventListener('change', () => renderAttendancesSection(currentEventId));
+            document.getElementById('attendancesEventSelect')?.addEventListener('change', (e) => {
+                const selectedId = e.target.value ? parseInt(e.target.value, 10) : null;
+                currentEventId = selectedId;
+                if (selectedId) {
+                    loadEventAttendees(selectedId, { renderTarget: 'section' });
+                } else {
+                    renderAttendancesSection(null);
+                }
+            });
+            toggleInteruniversityFields();
+            document.getElementById('publishRequiresCertificate')?.addEventListener('change', toggleCertificateFields);
+            toggleCertificateFields();
         });
 
         function logout() {
@@ -229,31 +555,209 @@
             window.location.href = '/';
         }
 
-        function showPendingEvents() {
+        function showPendingEvents(button) {
             document.getElementById('pendingEventsSection').style.display = 'block';
             document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('publishEventSection').style.display = 'none';
             document.getElementById('qrSection').style.display = 'none';
-            document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.getElementById('attendancesSection').style.display = 'none';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(btn => btn.classList.remove('active'));
+            if (button) button.classList.add('active');
             loadPendingEvents();
         }
 
-        function showAllEvents() {
+        function showAllEvents(button) {
             document.getElementById('pendingEventsSection').style.display = 'none';
             document.getElementById('allEventsSection').style.display = 'block';
+            document.getElementById('publishEventSection').style.display = 'none';
             document.getElementById('qrSection').style.display = 'none';
-            document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.getElementById('attendancesSection').style.display = 'none';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(btn => btn.classList.remove('active'));
+            if (button) button.classList.add('active');
             loadAllEvents();
         }
 
-        function showQrSection() {
+        function showPublishSection(button) {
             document.getElementById('pendingEventsSection').style.display = 'none';
             document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('publishEventSection').style.display = 'block';
+            document.getElementById('qrSection').style.display = 'none';
+            document.getElementById('attendancesSection').style.display = 'none';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(btn => btn.classList.remove('active'));
+            if (button) button.classList.add('active');
+        }
+
+        function showQrSection(button) {
+            document.getElementById('pendingEventsSection').style.display = 'none';
+            document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('publishEventSection').style.display = 'none';
             document.getElementById('qrSection').style.display = 'block';
-            document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btnQr').classList.add('active');
+            document.getElementById('attendancesSection').style.display = 'none';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(btn => btn.classList.remove('active'));
+            if (button) button.classList.add('active');
             loadQrEvents();
+        }
+
+        function showAttendancesSection(button) {
+            document.getElementById('pendingEventsSection').style.display = 'none';
+            document.getElementById('allEventsSection').style.display = 'none';
+            document.getElementById('publishEventSection').style.display = 'none';
+            document.getElementById('qrSection').style.display = 'none';
+            document.getElementById('attendancesSection').style.display = 'block';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(btn => btn.classList.remove('active'));
+            if (button) button.classList.add('active');
+            loadAttendancesEvents();
+            renderAttendancesSection(null);
+        }
+
+        function showPublishAlert(message, type = 'success') {
+            const alertEl = document.getElementById('publishAlert');
+            if (!alertEl) return;
+            alertEl.className = `alert alert-${type}`;
+            alertEl.textContent = message;
+            alertEl.style.display = 'block';
+            setTimeout(() => {
+                alertEl.style.display = 'none';
+            }, 4000);
+        }
+
+        document.getElementById('publishEventForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!authToken) {
+                logout();
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const requiresCertificate = document.getElementById('publishRequiresCertificate')?.checked || false;
+            const certificateTitle = document.getElementById('publishCertificateTitle')?.value || null;
+            const certificateSignerName = document.getElementById('publishCertificateSignerName')?.value || null;
+            const certificateSignerRole = document.getElementById('publishCertificateSignerRole')?.value || null;
+            const certificateBackgroundUrl = document.getElementById('publishCertificateBackgroundUrl')?.value || null;
+            const requiresProfessorSignature = document.getElementById('publishRequiresProfessorSignature')?.checked || false;
+            const professorSignerName = document.getElementById('publishProfessorSignerName')?.value || null;
+            const professorSignerRole = document.getElementById('publishProfessorSignerRole')?.value || null;
+            const audience = formData.get('audience') || 'publico';
+            const allowedDomainsRaw = formData.get('allowed_domains') || '';
+            const allowedEmailsRaw = formData.get('allowed_emails') || '';
+            const coverImageInput = document.getElementById('publishCoverImage');
+            const coverFile = coverImageInput && coverImageInput.files ? coverImageInput.files[0] : null;
+            const signerImageInput = document.getElementById('publishSignerImage');
+            const signerImageFile = signerImageInput && signerImageInput.files ? signerImageInput.files[0] : null;
+            const payload = {
+                title: formData.get('title'),
+                description: formData.get('description') || null,
+                event_type: formData.get('event_type') || null,
+                audience,
+                allowed_domains: allowedDomainsRaw
+                    ? allowedDomainsRaw.split(',').map(domain => domain.trim().toLowerCase()).filter(Boolean)
+                    : null,
+                allowed_emails: allowedEmailsRaw
+                    ? allowedEmailsRaw.split(',').map(email => email.trim().toLowerCase()).filter(Boolean)
+                    : null,
+                access_note: formData.get('access_note') || null,
+                location: formData.get('location') || null,
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date'),
+                capacity: formData.get('capacity') ? parseInt(formData.get('capacity'), 10) : null,
+                requires_certificate: requiresCertificate,
+                certificate_title: requiresCertificate ? (certificateTitle || 'Certificado de Asistencia') : null,
+                certificate_template: 'default',
+                certificate_signer_name: requiresCertificate ? certificateSignerName : null,
+                certificate_signer_role: requiresCertificate ? certificateSignerRole : null,
+                requires_professor_signature: requiresCertificate ? requiresProfessorSignature : false,
+                certificate_professor_signer_name: requiresCertificate ? professorSignerName : null,
+                certificate_professor_signer_role: requiresCertificate ? professorSignerRole : null,
+                certificate_background_url: requiresCertificate ? certificateBackgroundUrl : null
+            };
+
+            if (payload.start_date) payload.start_date = new Date(payload.start_date).toISOString();
+            if (payload.end_date) payload.end_date = new Date(payload.end_date).toISOString();
+
+            try {
+                const createRes = await fetch(`${API_BASE_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!createRes.ok) {
+                    const err = await createRes.json().catch(() => ({}));
+                    throw new Error(err.detail || 'No se pudo crear el evento');
+                }
+
+                const created = await createRes.json();
+
+                const approveRes = await fetch(`${API_BASE_URL}/${created.id}/approve`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!approveRes.ok) {
+                    const err = await approveRes.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Evento creado, pero no se pudo aprobar');
+                }
+
+                if (coverFile) {
+                    const uploadForm = new FormData();
+                    uploadForm.append('file', coverFile);
+                    const uploadRes = await fetch(`${API_BASE_URL}/${created.id}/cover-image`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: uploadForm
+                    });
+                    if (!uploadRes.ok) {
+                        const err = await uploadRes.json().catch(() => ({}));
+                        throw new Error(err.detail || 'Evento aprobado, pero no se pudo subir la portada');
+                    }
+                }
+
+                if (requiresCertificate && signerImageFile) {
+                    const signerForm = new FormData();
+                    signerForm.append('file', signerImageFile);
+                    if (certificateSignerName) signerForm.append('signer_name', certificateSignerName);
+                    if (certificateSignerRole) signerForm.append('signer_role', certificateSignerRole);
+                    const signerRes = await fetch(`${API_BASE_URL}/${created.id}/signature`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: signerForm
+                    });
+                    if (!signerRes.ok) {
+                        const err = await signerRes.json().catch(() => ({}));
+                        throw new Error(err.detail || 'Evento aprobado, pero no se pudo subir la firma institucional');
+                    }
+                }
+
+                showPublishAlert('Evento publicado y aprobado correctamente.', 'success');
+                e.target.reset();
+                loadAllEvents();
+                loadQrEvents();
+            } catch (error) {
+                showPublishAlert(error.message || 'Error al publicar el evento', 'danger');
+            }
+        });
+
+        function toggleInteruniversityFields() {
+            const audience = document.getElementById('publishAudience')?.value;
+            const fields = document.getElementById('interuniversityFields');
+            if (!fields) return;
+            fields.style.display = audience === 'interuniversitario' ? 'block' : 'none';
+        }
+
+        function toggleCertificateFields() {
+            const enabled = document.getElementById('publishRequiresCertificate')?.checked;
+            const fields = document.getElementById('publishCertificateFields');
+            if (!fields) return;
+            fields.style.display = enabled ? 'block' : 'none';
         }
 
         async function loadQrEvents() {
@@ -264,6 +768,10 @@
                 const response = await fetch(`${API_BASE_URL}?status=approved&include_inactive=false&limit=100`);
                 if (!response.ok) throw new Error('Error al cargar eventos');
                 const events = await response.json();
+                eventsCache = {};
+                events.forEach(event => {
+                    eventsCache[event.id] = event.title || `evento-${event.id}`;
+                });
                 renderQrEvents(events);
             } catch (error) {
                 container.innerHTML = `<div class="alert alert-danger">Error al cargar eventos: ${error.message}</div>`;
@@ -274,7 +782,7 @@
             const container = document.getElementById('qrEventsList');
             if (!container) return;
             if (events.length === 0) {
-                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos aprobados. Aprobá un evento para generar su QR de asistencia.</div>';
+                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos aprobados. AprobÃ¡ un evento para generar su QR de asistencia.</div>';
                 return;
             }
             container.innerHTML = events.map(event => `
@@ -353,11 +861,25 @@
             loadAllEvents(status);
         }
 
+        function normalizeStatus(status) {
+            return (status || 'pending').toString().toLowerCase();
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': '<span class="badge bg-warning text-dark">Pendiente</span>',
+                'approved': '<span class="badge bg-success">Aprobado</span>',
+                'denied': '<span class="badge bg-danger">Rechazado</span>',
+                'finalized': '<span class="badge bg-info">Finalizado</span>'
+            };
+            return badges[normalizeStatus(status)] || '<span class="badge bg-secondary">Desconocido</span>';
+        }
+
         function renderPendingEvents(events) {
             const container = document.getElementById('pendingEventsList');
             
             if (events.length === 0) {
-                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos pendientes de aprobación.</div>';
+                container.innerHTML = '<div class="alert alert-info"><i class="bi bi-info-circle"></i> No hay eventos pendientes de aprobaciÃ³n.</div>';
                 return;
             }
 
@@ -370,27 +892,31 @@
                                 <p class="card-text text-muted">
                                     <i class="bi bi-tag"></i> ${event.event_type || 'Sin tipo'} | 
                                     <i class="bi bi-calendar"></i> ${formatDate(event.start_date)} - ${formatDate(event.end_date)}
+                                    ${event.audience ? `| <i class="bi bi-people"></i> ${formatAudience(event.audience)}` : ''}
                                     ${event.location ? `| <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
                                 </p>
                                 ${event.description ? `<p class="card-text">${escapeHtml(event.description.substring(0, 200))}${event.description.length > 200 ? '...' : ''}</p>` : ''}
                                 <small class="text-muted">
                                     <i class="bi bi-person"></i> Creado el ${formatDate(event.created_at)}
+                                    ${event.creator_name ? `<br><i class="bi bi-person-badge"></i> <strong>Propuesto por:</strong> ${escapeHtml(event.creator_name)}${event.creator_email ? ` (${escapeHtml(event.creator_email)})` : ''}` : ''}
                                 </small>
                             </div>
                             <div class="ms-3">
-                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                ${getStatusBadge(normalizeStatus(event.status))}
                             </div>
                         </div>
                         <div class="mt-3">
                             <button class="btn btn-sm btn-outline-primary" onclick="viewEventDetails(${event.id})">
                                 <i class="bi bi-eye"></i> Ver Detalles
                             </button>
-                            <button class="btn btn-sm btn-success" onclick="approveEventById(${event.id})">
-                                <i class="bi bi-check-circle"></i> Aprobar
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="rejectEventById(${event.id})">
-                                <i class="bi bi-x-circle"></i> Rechazar
-                            </button>
+                            ${normalizeStatus(event.status) === 'pending' ? `
+                                <button class="btn btn-sm btn-success" onclick="approveEventById(${event.id})">
+                                    <i class="bi bi-check-circle"></i> Aprobar
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="rejectEventById(${event.id})">
+                                    <i class="bi bi-x-circle"></i> Rechazar
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -406,7 +932,8 @@
             }
 
             container.innerHTML = events.map(event => {
-                const statusBadge = getStatusBadge(event.status);
+                const normalizedStatus = normalizeStatus(event.status);
+                const statusBadge = getStatusBadge(normalizedStatus);
                 return `
                     <div class="card mb-3 event-card">
                         <div class="card-body">
@@ -416,11 +943,13 @@
                                     <p class="card-text text-muted">
                                         <i class="bi bi-tag"></i> ${event.event_type || 'Sin tipo'} | 
                                         <i class="bi bi-calendar"></i> ${formatDate(event.start_date)} - ${formatDate(event.end_date)}
+                                        ${event.audience ? `| <i class="bi bi-people"></i> ${formatAudience(event.audience)}` : ''}
                                         ${event.location ? `| <i class="bi bi-geo-alt"></i> ${escapeHtml(event.location)}` : ''}
                                     </p>
                                     ${event.description ? `<p class="card-text">${escapeHtml(event.description.substring(0, 200))}${event.description.length > 200 ? '...' : ''}</p>` : ''}
                                     <small class="text-muted">
                                         <i class="bi bi-person"></i> Creado el ${formatDate(event.created_at)}
+                                        ${event.creator_name ? `<br><i class="bi bi-person-badge"></i> <strong>Propuesto por:</strong> ${escapeHtml(event.creator_name)}${event.creator_email ? ` (${escapeHtml(event.creator_email)})` : ''}` : ''}
                                     </small>
                                 </div>
                                 <div class="ms-3">
@@ -431,7 +960,7 @@
                                 <button class="btn btn-sm btn-outline-primary" onclick="viewEventDetails(${event.id})">
                                     <i class="bi bi-eye"></i> Ver Detalles
                                 </button>
-                                ${event.status === 'pending' ? `
+                                ${normalizedStatus === 'pending' ? `
                                     <button class="btn btn-sm btn-success" onclick="approveEventById(${event.id})">
                                         <i class="bi bi-check-circle"></i> Aprobar
                                     </button>
@@ -439,7 +968,7 @@
                                         <i class="bi bi-x-circle"></i> Rechazar
                                     </button>
                                 ` : ''}
-                                ${event.status === 'approved' ? `
+                                ${normalizedStatus === 'approved' ? `
                                     <button class="btn btn-sm btn-outline-primary" onclick="showEventQr(${event.id})">
                                         <i class="bi bi-qr-code"></i> Ver QR
                                     </button>
@@ -452,16 +981,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        function getStatusBadge(status) {
-            const badges = {
-                'pending': '<span class="badge bg-warning text-dark">Pendiente</span>',
-                'approved': '<span class="badge bg-success">Aprobado</span>',
-                'denied': '<span class="badge bg-danger">Rechazado</span>',
-                'finalized': '<span class="badge bg-info">Finalizado</span>'
-            };
-            return badges[status] || '<span class="badge bg-secondary">Desconocido</span>';
         }
 
         async function viewEventDetails(eventId) {
@@ -478,7 +997,7 @@
 
                 const event = await response.json();
                 currentEventId = event.id;
-                currentEventStatus = event.status;
+                currentEventStatus = normalizeStatus(event.status);
 
                 document.getElementById('eventDetailsTitle').textContent = escapeHtml(event.title);
                 document.getElementById('eventDetailsBody').innerHTML = `
@@ -486,8 +1005,11 @@
                         <strong>Tipo de Evento:</strong> ${event.event_type || 'No especificado'}
                     </div>
                     <div class="mb-3">
-                        <strong>Descripción:</strong>
-                        <p>${escapeHtml(event.description || 'Sin descripción')}</p>
+                        <strong>Acceso:</strong> ${event.audience ? formatAudience(event.audience) : 'No especificado'}
+                    </div>
+                    <div class="mb-3">
+                        <strong>DescripciÃ³n:</strong>
+                        <p>${escapeHtml(event.description || 'Sin descripciÃ³n')}</p>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -501,7 +1023,7 @@
                     </div>
                     ${event.location ? `
                         <div class="mb-3">
-                            <strong>Ubicación:</strong> ${escapeHtml(event.location)}
+                            <strong>UbicaciÃ³n:</strong> ${escapeHtml(event.location)}
                         </div>
                     ` : ''}
                     ${event.capacity ? `
@@ -510,29 +1032,38 @@
                         </div>
                     ` : ''}
                     <div class="mb-3">
-                        <strong>Estado:</strong> ${getStatusBadge(event.status)}
+                        <strong>Estado:</strong> ${getStatusBadge(currentEventStatus)}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Microcredencial:</strong>
+                        ${event.requires_certificate ? '<span class="badge bg-success">SÃ­</span>' : '<span class="badge bg-secondary">No</span>'}
                     </div>
                     <div class="mb-3">
                         <strong>Creado:</strong> ${formatDate(event.created_at)}
                     </div>
+                    ${event.creator_name ? `
+                        <div class="mb-3">
+                            <strong><i class="bi bi-person-badge"></i> Propuesto por:</strong><br>
+                            ${escapeHtml(event.creator_name)}${event.creator_email ? ` (${escapeHtml(event.creator_email)})` : ''}
+                        </div>
+                    ` : ''}
+                    <div id="issueCredentialsResult" class="alert mt-2" style="display:none;"></div>
                 `;
 
-                // Mostrar/ocultar botones según el estado
-                const btnApprove = document.getElementById('btnApproveEvent');
-                const btnReject = document.getElementById('btnRejectEvent');
                 const statusGroup = document.getElementById('statusChangeGroup');
-                const btnShowQr = document.getElementById('btnShowQr');
+                const btnIssue = document.getElementById('btnIssueCredentials');
+                const btnShowAttendees = document.getElementById('btnShowAttendees');
 
-                if (event.status === 'pending') {
-                    btnApprove.style.display = 'inline-block';
-                    btnReject.style.display = 'inline-block';
-                    statusGroup.style.display = 'none';
-                    if (btnShowQr) btnShowQr.style.display = 'none';
-                } else {
-                    btnApprove.style.display = 'none';
-                    btnReject.style.display = 'none';
-                    statusGroup.style.display = 'inline-block';
-                    if (btnShowQr) btnShowQr.style.display = event.status === 'approved' ? 'inline-block' : 'none';
+                if (btnShowAttendees) btnShowAttendees.style.display = 'inline-flex';
+
+                if (btnIssue) {
+                    const canIssue = !!event.requires_certificate && (normalizeStatus(event.status) === 'finalized');
+                    btnIssue.style.display = canIssue ? 'inline-flex' : 'none';
+                    btnIssue.disabled = !canIssue;
+                }
+
+                if (statusGroup) {
+                    statusGroup.style.display = currentEventStatus === 'pending' ? 'none' : 'inline-block';
                 }
 
                 const modal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
@@ -545,9 +1076,19 @@
         async function showEventQr(eventId) {
             const container = document.getElementById('qrImageContainer');
             const qrError = document.getElementById('qrError');
+            const btnDownload = document.getElementById('btnDownloadQr');
+            const btnPrint = document.getElementById('btnPrintQr');
             if (!container || !qrError) return;
             container.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
             qrError.style.display = 'none';
+            if (btnDownload) {
+                btnDownload.disabled = true;
+                btnDownload.onclick = null;
+            }
+            if (btnPrint) {
+                btnPrint.disabled = true;
+                btnPrint.onclick = null;
+            }
             const modal = new bootstrap.Modal(document.getElementById('qrModal'));
             modal.show();
             try {
@@ -564,8 +1105,44 @@
                 const blob = await res.blob();
                 const url = URL.createObjectURL(blob);
                 container.innerHTML = '<img src="' + url + '" alt="QR" class="img-fluid" style="max-width: 260px;">';
+                currentQrUrl = url;
+                currentQrTitle = (eventsCache && eventsCache[eventId]) ? eventsCache[eventId] : `evento-${eventId}`;
+
+                if (btnDownload) {
+                    btnDownload.disabled = false;
+                    btnDownload.onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `qr-${currentQrTitle}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                }
+                if (btnPrint) {
+                    btnPrint.disabled = false;
+                    btnPrint.onclick = () => {
+                        const printWindow = window.open('', '_blank');
+                        if (!printWindow) return;
+                        printWindow.document.write(`
+                            <html>
+                            <head><title>QR ${currentQrTitle}</title></head>
+                            <body style="text-align:center;font-family:Arial,sans-serif;">
+                                <h3>QR de asistencia</h3>
+                                <p>${currentQrTitle}</p>
+                                <img src="${url}" style="max-width:320px;width:100%;height:auto;" />
+                                <script>
+                                    window.onload = function() { window.print(); window.close(); };
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+                        printWindow.document.close();
+                    };
+                }
                 document.getElementById('qrModal').addEventListener('hidden.bs.modal', function onHide() {
                     URL.revokeObjectURL(url);
+                    currentQrUrl = null;
                     document.getElementById('qrModal').removeEventListener('hidden.bs.modal', onHide);
                 }, { once: true });
             } catch (e) {
@@ -575,8 +1152,262 @@
             }
         }
 
+        async function showEventAttendees() {
+            if (!currentEventId) return;
+            const modal = new bootstrap.Modal(document.getElementById('attendeesModal'));
+            modal.show();
+            await loadEventAttendees(currentEventId);
+        }
+
+        async function loadEventAttendees(eventId, options = {}) {
+            const loadingEl = document.getElementById('attendeesLoading');
+            const emptyEl = document.getElementById('attendeesEmpty');
+            const tableBody = document.getElementById('attendeesTableBody');
+            if (loadingEl) loadingEl.style.display = 'block';
+            if (emptyEl) emptyEl.style.display = 'none';
+            if (tableBody) tableBody.innerHTML = '';
+
+            try {
+                const response = await fetch(`/attendance/admin/events/${eventId}/attendances`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.detail || 'No se pudo cargar asistentes');
+                }
+                const data = await response.json();
+                attendeesCache[eventId] = data;
+                if (options.renderTarget === 'section') {
+                    renderAttendancesSection(eventId);
+                } else {
+                    renderAttendees(eventId);
+                }
+            } catch (error) {
+                if (emptyEl) {
+                    emptyEl.textContent = `Error: ${error.message}`;
+                    emptyEl.style.display = 'block';
+                }
+            } finally {
+                if (loadingEl) loadingEl.style.display = 'none';
+            }
+        }
+
+        function renderAttendees(eventId) {
+            if (!eventId || !attendeesCache[eventId]) return;
+            const data = attendeesCache[eventId];
+            const tableBody = document.getElementById('attendeesTableBody');
+            const emptyEl = document.getElementById('attendeesEmpty');
+            const countEl = document.getElementById('attendeeCount');
+            const footerCountEl = document.getElementById('attendeeFooterCount');
+            const titleEl = document.getElementById('attendeesEventTitle');
+            const searchValue = (document.getElementById('attendeeSearch')?.value || '').toLowerCase();
+            const sortOrder = document.getElementById('attendeeSort')?.value || 'desc';
+
+            let attendees = data.attendees || [];
+            if (searchValue) {
+                attendees = attendees.filter(att => {
+                    const name = (att.name || '').toLowerCase();
+                    const email = (att.email || '').toLowerCase();
+                    return name.includes(searchValue) || email.includes(searchValue);
+                });
+            }
+
+            attendees.sort((a, b) => {
+                const aDate = a.attended_at ? new Date(a.attended_at).getTime() : 0;
+                const bDate = b.attended_at ? new Date(b.attended_at).getTime() : 0;
+                return sortOrder === 'asc' ? aDate - bDate : bDate - aDate;
+            });
+
+            if (countEl) {
+                const total = data.total_attendees || (data.attendees || []).length;
+                const capacity = data.capacity;
+                const percent = capacity ? ` (${total}/${capacity}, ${Math.round((total / capacity) * 100)}%)` : '';
+                countEl.textContent = `${total}${capacity ? ` / ${capacity}` : ''}${percent}`;
+                if (footerCountEl) {
+                    footerCountEl.textContent = `Asistencias: ${total}${capacity ? ` / ${capacity}` : ''}${percent}`;
+                }
+            }
+            if (titleEl) {
+                titleEl.textContent = data.event_title ? `Evento: ${data.event_title}` : '';
+            }
+
+            if (!attendees.length) {
+                if (tableBody) tableBody.innerHTML = '';
+                if (emptyEl) emptyEl.style.display = 'block';
+                return;
+            }
+
+            if (emptyEl) emptyEl.style.display = 'none';
+            if (tableBody) {
+                tableBody.innerHTML = attendees.map(att => `
+                    <tr>
+                        <td>${escapeHtml(att.name || 'Sin nombre')}</td>
+                        <td>${escapeHtml(att.email || '')}</td>
+                        <td>${escapeHtml(att.role || '')}</td>
+                        <td>${att.attended_at ? formatDate(att.attended_at) : ''}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function loadAttendancesEvents() {
+            const selectEl = document.getElementById('attendancesEventSelect');
+            if (!selectEl) return;
+            selectEl.innerHTML = '<option value="">Cargando eventos...</option>';
+            try {
+                const response = await fetch(`${API_BASE_URL}?include_inactive=false&limit=200`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!response.ok) throw new Error('No se pudo cargar eventos');
+                const events = await response.json();
+                selectEl.innerHTML = '<option value="">Selecciona un evento...</option>' + events.map(event => `
+                    <option value="${event.id}">${escapeHtml(event.title || `Evento ${event.id}`)}</option>
+                `).join('');
+            } catch (error) {
+                selectEl.innerHTML = '<option value="">Error al cargar eventos</option>';
+            }
+        }
+
+        function renderAttendancesSection(eventId) {
+            const tableBody = document.getElementById('attendancesTableBody');
+            const emptyEl = document.getElementById('attendancesEmpty');
+            const countEl = document.getElementById('attendancesCount');
+            const searchValue = (document.getElementById('attendancesSearch')?.value || '').toLowerCase();
+            const sortOrder = document.getElementById('attendancesSort')?.value || 'desc';
+
+            if (!eventId || !attendeesCache[eventId]) {
+                if (tableBody) tableBody.innerHTML = '';
+                if (emptyEl) {
+                    emptyEl.textContent = 'Selecciona un evento para ver las asistencias.';
+                    emptyEl.style.display = 'block';
+                }
+                if (countEl) countEl.textContent = '';
+                return;
+            }
+
+            const data = attendeesCache[eventId];
+            let attendees = data.attendees || [];
+            if (searchValue) {
+                attendees = attendees.filter(att => {
+                    const name = (att.name || '').toLowerCase();
+                    const email = (att.email || '').toLowerCase();
+                    return name.includes(searchValue) || email.includes(searchValue);
+                });
+            }
+
+            attendees.sort((a, b) => {
+                const aDate = a.attended_at ? new Date(a.attended_at).getTime() : 0;
+                const bDate = b.attended_at ? new Date(b.attended_at).getTime() : 0;
+                return sortOrder === 'asc' ? aDate - bDate : bDate - aDate;
+            });
+
+            if (countEl) {
+                const total = data.total_attendees || (data.attendees || []).length;
+                const capacity = data.capacity;
+                const percent = capacity ? ` (${total}/${capacity}, ${Math.round((total / capacity) * 100)}%)` : '';
+                countEl.textContent = `${total}${capacity ? ` / ${capacity}` : ''}${percent}`;
+            }
+
+            if (!attendees.length) {
+                if (tableBody) tableBody.innerHTML = '';
+                if (emptyEl) {
+                    emptyEl.textContent = 'No hay asistencias registradas.';
+                    emptyEl.style.display = 'block';
+                }
+                return;
+            }
+
+            if (emptyEl) emptyEl.style.display = 'none';
+            if (tableBody) {
+                tableBody.innerHTML = attendees.map(att => `
+                    <tr>
+                        <td>${escapeHtml(att.name || 'Sin nombre')}</td>
+                        <td>${escapeHtml(att.email || '')}</td>
+                        <td>${escapeHtml(att.role || '')}</td>
+                        <td>${att.attended_at ? formatDate(att.attended_at) : ''}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function exportAttendeesCsv() {
+            if (!currentEventId || !attendeesCache[currentEventId]) {
+                alert('No hay datos para exportar.');
+                return;
+            }
+            const data = attendeesCache[currentEventId];
+            const rows = data.attendees || [];
+            if (!rows.length) {
+                alert('No hay asistencias registradas.');
+                return;
+            }
+
+            const headers = ['Nombre', 'Correo', 'Rol', 'Asistencia'];
+            const csvRows = [headers.join(',')];
+            rows.forEach(att => {
+                const row = [
+                    (att.name || '').replace(/"/g, '""'),
+                    (att.email || '').replace(/"/g, '""'),
+                    (att.role || '').replace(/"/g, '""'),
+                    att.attended_at ? new Date(att.attended_at).toISOString() : ''
+                ].map(value => `"${value}"`);
+                csvRows.push(row.join(','));
+            });
+
+            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const title = (data.event_title || `evento-${currentEventId}`).replace(/\s+/g, '_').toLowerCase();
+            link.href = url;
+            link.download = `asistentes-${title}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        async function issueCredentials() {
+            if (!currentEventId) return;
+            const resultEl = document.getElementById('issueCredentialsResult');
+            const btnIssue = document.getElementById('btnIssueCredentials');
+            if (resultEl) {
+                resultEl.style.display = 'none';
+                resultEl.className = 'alert mt-2';
+            }
+            if (btnIssue) btnIssue.disabled = true;
+
+            try {
+                const response = await fetch(`/admin/events/${currentEventId}/issue-credentials`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(data.detail || 'No se pudieron emitir credenciales');
+                }
+                if (resultEl) {
+                    resultEl.classList.add('alert-success');
+                    resultEl.textContent = `Emitidas: ${data.issued}, Ya existÃ­an: ${data.existing}, Total asistentes: ${data.total_attendees}`;
+                    resultEl.style.display = 'block';
+                }
+                currentEventAttendeesCount = data.total_attendees || currentEventAttendeesCount;
+            } catch (error) {
+                if (resultEl) {
+                    resultEl.classList.add('alert-danger');
+                    resultEl.textContent = error.message || 'Error al emitir credenciales';
+                    resultEl.style.display = 'block';
+                }
+            } finally {
+                if (btnIssue) btnIssue.disabled = false;
+            }
+        }
+
         async function approveEventById(eventId) {
-            if (!confirm('¿Estás seguro de que deseas aprobar este evento?')) {
+            if (!confirm('Â¿EstÃ¡s seguro de que deseas aprobar este evento?')) {
                 return;
             }
 
@@ -609,7 +1440,7 @@
         }
 
         async function rejectEventById(eventId) {
-            if (!confirm('¿Estás seguro de que deseas rechazar este evento?')) {
+            if (!confirm('Â¿EstÃ¡s seguro de que deseas rechazar este evento?')) {
                 return;
             }
 
@@ -643,7 +1474,7 @@
 
         async function changeEventStatusById(eventId, newStatus) {
             const statusText = newStatus === 'approved' ? 'aprobado' : 'finalizado';
-            if (!confirm(`¿Estás seguro de que deseas cambiar el estado del evento a "${statusText}"?`)) {
+            if (!confirm(`Â¿EstÃ¡s seguro de que deseas cambiar el estado del evento a "${statusText}"?`)) {
                 return;
             }
 
@@ -677,18 +1508,6 @@
             }
         }
 
-        function approveEvent() {
-            if (currentEventId) {
-                approveEventById(currentEventId);
-            }
-        }
-
-        function rejectEvent() {
-            if (currentEventId) {
-                rejectEventById(currentEventId);
-            }
-        }
-
         function changeEventStatus(status) {
             if (currentEventId) {
                 changeEventStatusById(currentEventId, status);
@@ -707,6 +1526,16 @@
             });
         }
 
+        function formatAudience(audience) {
+            if (!audience) return '';
+            const labels = {
+                'publico': 'Abierto al pÃºblico',
+                'interno': 'Solo PUCE',
+                'interuniversitario': 'Interuniversitario'
+            };
+            return labels[audience] || audience;
+        }
+
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -716,3 +1545,4 @@
     </script>
 </body>
 </html>
+

@@ -16,11 +16,27 @@ CREATE TABLE IF NOT EXISTS events (
     title VARCHAR(500) NOT NULL,
     description TEXT,
     event_type VARCHAR(100),
+    audience VARCHAR(30) DEFAULT 'publico' CHECK (audience IN ('interno', 'interuniversitario', 'publico')),
+    allowed_domains JSONB,
+    allowed_emails JSONB,
+    access_note TEXT,
+    cover_image_url TEXT,
+    requires_certificate BOOLEAN DEFAULT FALSE,
+    certificate_template VARCHAR(100) DEFAULT 'default',
+    certificate_title VARCHAR(200),
+    certificate_signer_name VARCHAR(200),
+    certificate_signer_role VARCHAR(200),
+    certificate_signer_image_url TEXT,
+    requires_professor_signature BOOLEAN DEFAULT FALSE,
+    certificate_professor_signer_name VARCHAR(200),
+    certificate_professor_signer_role VARCHAR(200),
+    certificate_professor_signer_image_url TEXT,
+    certificate_background_url TEXT,
     start_date TIMESTAMPTZ NOT NULL,
     end_date TIMESTAMPTZ NOT NULL,
     location VARCHAR(150),
     capacity INTEGER CHECK (capacity > 0),
-    status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'denied')),
+    status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'denied', 'finalized')),
     is_active BOOLEAN DEFAULT TRUE,
     creator_id UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -44,7 +60,8 @@ CREATE TABLE IF NOT EXISTS credentials (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
     issued_at TIMESTAMPTZ DEFAULT NOW(),
-    is_valid BOOLEAN DEFAULT TRUE
+    is_valid BOOLEAN DEFAULT TRUE,
+    certificate_url TEXT
 );
 
 -- Índices
@@ -85,4 +102,3 @@ CREATE POLICY "Users can view own attendances" ON attendances
 
 CREATE POLICY "Users can create own attendances" ON attendances
     FOR INSERT WITH CHECK (auth.uid() = user_id);
-

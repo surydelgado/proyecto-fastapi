@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Asistencia - QR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand mb-0"><i class="bi bi-qr-code-scan"></i> Registro de Asistencia</span>
+        </div>
+    </nav>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-check-circle"></i> Confirmar Asistencia</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="autoResult" class="mb-3" style="display: none;"></div>
+                        <div id="contentArea">
+                        {% if event_title %}
+                        <p class="text-muted mb-3">Evento: <strong>{{ event_title }}</strong></p>
+                        {% endif %}
+                        
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                        </div>
+                        {% elif success %}
+                        {% if auto_registered %}
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i><br>
+                            <strong style="font-size: 1.2rem;">Â¡Asistencia Registrada Exitosamente!</strong><br><br>
+                            {{ message }}<br><br>
+                            <small class="text-muted">Tu asistencia ha sido confirmada automÃ¡ticamente al escanear el cÃ³digo QR.</small>
+                        </div>
+                        {% elif already_registered %}
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i><br>
+                            <strong style="font-size: 1.2rem;">Asistencia Ya Confirmada</strong><br><br>
+                            {{ message }}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i><br>
+                            <strong style="font-size: 1.2rem;">Â¡Asistencia Registrada Exitosamente!</strong><br><br>
+                            Tu asistencia al evento ha sido confirmada âœ…
+                        </div>
+                        {% endif %}
+                        {% elif needs_login %}
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> <strong>Debes iniciar sesiÃ³n</strong><br>
+                            Para registrar tu asistencia necesitas tener una cuenta y estar autenticado.
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="/" onclick="saveReturnUrl()" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar SesiÃ³n
+                            </a>
+                        </div>
+                        <script>
+                            function saveReturnUrl() {
+                                const currentUrl = window.location.href;
+                                sessionStorage.setItem('returnUrl', currentUrl);
+                            }
+                        </script>
+                        {% elif needs_enrollment %}
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle"></i> <strong>No estÃ¡s inscrito en este evento</strong><br>
+                            Debes inscribirte primero en la pÃ¡gina principal antes de poder registrar asistencia.
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="/" class="btn btn-primary btn-lg">
+                                <i class="bi bi-calendar-plus"></i> Ir a Inscribirme
+                            </a>
+                        </div>
+                        {% elif token %}
+                        <p class="text-muted mb-3">Confirma tu asistencia al evento.</p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" onclick="registerAttendance()">
+                                <i class="bi bi-check-circle"></i> Registrar Asistencia
+                            </button>
+                        </div>
+                        <div id="resultMessage" class="mt-3" style="display: none;"></div>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const token = "{{ token }}";
+        const authToken = localStorage.getItem('authToken');
+        const needsLogin = {% if needs_login %}true{% else %}false{% endif %};
+        const isAuthenticated = {% if is_authenticated %}true{% else %}false{% endif %};
+        
+        window.addEventListener('DOMContentLoaded', async function() {
+            if (!authToken || !token) {
+                return;
+            }
+
+            const autoResult = document.getElementById('autoResult');
+            const contentArea = document.getElementById('contentArea');
+            if (autoResult && contentArea) {
+                autoResult.innerHTML = '<div class="alert alert-info"><span class="spinner-border spinner-border-sm me-2"></span>Validando asistencia...</div>';
+                autoResult.style.display = 'block';
+            }
+
+            try {
+                const response = await fetch('/attendance/scan-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    if (contentArea) contentArea.style.display = 'none';
+                    if (autoResult) {
+                        autoResult.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle-fill me-1"></i> <strong>Â¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada âœ…</div>';
+                    }
+                    return;
+                }
+
+                if (contentArea) contentArea.style.display = 'none';
+                if (autoResult) {
+                    const detail = (data && data.detail) ? data.detail : 'No se pudo registrar la asistencia.';
+                    let html = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ' + detail + '</div>';
+
+                    if (detail.toLowerCase().includes('inscrito')) {
+                        html += '<div class="d-grid gap-2"><a href="/" class="btn btn-primary btn-lg"><i class="bi bi-calendar-plus"></i> Ir a Inscribirme</a></div>';
+                    } else if (detail.toLowerCase().includes('iniciar sesiÃ³n') || response.status === 401) {
+                        html += '<div class="d-grid gap-2"><a href="/" onclick="saveReturnUrl()" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right"></i> Ir a Iniciar SesiÃ³n</a></div>';
+                    }
+                    autoResult.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error al registrar asistencia automÃ¡ticamente:', error);
+                if (autoResult) {
+                    autoResult.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexiÃ³n. Intenta nuevamente.</div>';
+                    autoResult.style.display = 'block';
+                }
+            }
+        });
+        
+        async function registerAttendance() {
+            if (!token) {
+                showMessage('Error: No hay token disponible', 'danger');
+                return;
+            }
+            
+            if (!authToken) {
+                alert('Debes iniciar sesiÃ³n para registrar asistencia. Redirigiendo...');
+                window.location.href = '/';
+                return;
+            }
+            
+            const btn = document.querySelector('button[onclick="registerAttendance()"]');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (!btn || !resultMessage) {
+                console.error('Elementos del DOM no encontrados');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Registrando...';
+            resultMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch('/attendance/scan-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultMessage.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> <strong>Â¡Asistencia registrada exitosamente!</strong><br>Tu asistencia al evento ha sido confirmada âœ…</div>';
+                    resultMessage.style.display = 'block';
+                    
+                    if (btn) {
+                        btn.style.display = 'none';
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    resultMessage.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ' + (data.detail || 'Error al registrar asistencia') + '</div>';
+                    resultMessage.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Registrar Asistencia';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultMessage.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Error de conexiÃ³n. Verifica tu conexiÃ³n a internet.</div>';
+                resultMessage.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Registrar Asistencia';
+            }
+        }
+        
+        function showMessage(message, type) {
+            const resultMessage = document.getElementById('resultMessage');
+            if (resultMessage) {
+                resultMessage.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                resultMessage.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -49,6 +49,21 @@ body {
     padding: 1.25rem;
 }
 
+/* Portadas en tarjetas de eventos */
+.event-card .card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    object-position: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Modal detalles evento (imagen consistente) */
+#publicEventDetailsModal .modal-dialog {
+    max-width: 760px;
+}
+
 .btn-group button.active {
     background-color: var(--puce-blue);
     color: var(--white);

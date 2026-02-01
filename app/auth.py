@@ -63,6 +63,7 @@ async def get_current_user(
             "email": user.email,
             "role": user_role,
             "user_metadata": user.user_metadata or {},
+            "access_token": token,
         }
     except HTTPException:
         raise

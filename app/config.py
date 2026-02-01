@@ -8,16 +8,17 @@ load_dotenv(BASE_DIR / ".env")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 APP_BASE_URL = (os.getenv("APP_BASE_URL") or "").strip().rstrip("/")
 QR_TOKEN_SECRET = os.getenv("QR_TOKEN_SECRET") or SUPABASE_SERVICE_KEY or "qr-secret-change-in-production"
+PUCE_ALLOWED_DOMAINS = os.getenv("PUCE_ALLOWED_DOMAINS", "pucesm.edu.ec")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError(
         "SUPABASE_URL y SUPABASE_KEY deben estar configuradas en el archivo .env"
     )
 
-__all__ = ["SUPABASE_URL", "SUPABASE_KEY", "SUPABASE_SERVICE_KEY", "supabase", "supabase_admin", "APP_BASE_URL", "QR_TOKEN_SECRET"]
+__all__ = ["SUPABASE_URL", "SUPABASE_KEY", "SUPABASE_SERVICE_KEY", "supabase", "supabase_admin", "APP_BASE_URL", "QR_TOKEN_SECRET", "PUCE_ALLOWED_DOMAINS"]
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 

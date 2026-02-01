@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pydantic
 python-dotenv
-qrcode
+qrcode[pil]
 pyzbar
 email-validator
 jinja2
@@ -11,4 +11,9 @@ supabase
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
+Pillow
+weasyprint
+resend
+tzdata
+
 
