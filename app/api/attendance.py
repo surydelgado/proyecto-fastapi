@@ -151,11 +151,27 @@ async def enroll_to_event(
                 )
 
         access_type = (event.get("access_type") or event.get("audience") or "publico").lower()
-        if access_type in ["puce_only", "interno"]:
+        email_domain = user_email.split("@")[-1] if "@" in user_email else ""
+        if access_type in ["public", "publico"]:
+            pass
+        elif access_type in ["puce_only", "interno"]:
             if not user_email.endswith("@pucesm.edu.ec"):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Este evento es exclusivo para PUCE. Inicia sesión con tu correo institucional (@pucesm.edu.ec) para inscribirte."
+                )
+        elif access_type in ["interuniversity", "interuniversitario"]:
+            allowed_domains = _normalize_list(event.get("allowed_domains"))
+            allowed_emails = _normalize_list(event.get("allowed_emails"))
+            if not allowed_domains and not allowed_emails:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Este evento es interuniversitario pero aún no tiene universidades habilitadas. Contacta al administrador."
+                )
+            if user_email not in allowed_emails and email_domain not in allowed_domains:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Este evento es interuniversitario. Tu universidad no está habilitada para inscribirse."
                 )
 
         if event.get("capacity"):
@@ -240,13 +256,15 @@ async def enroll_to_event(
                 </div>
             </div>
             """
-            background.add_task(
-                send_event_email,
-                current_user.get("email"),
-                f"Inscripción confirmada: {event.get('title') or 'Evento académico'}",
-                html,
-                ics,
-            )
+            user_email = current_user.get("email")
+            if user_email:
+                background.add_task(
+                    send_event_email,
+                    user_email,
+                    f"Inscripción confirmada: {event.get('title') or 'Evento académico'}",
+                    html,
+                    ics,
+                )
 
         return {
             "id": row["id"],

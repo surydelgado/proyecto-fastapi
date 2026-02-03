@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import secrets
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from supabase import Client
@@ -20,6 +20,7 @@ from app.services.certificate_service import (
     render_certificate_html,
     render_certificate_pdf,
 )
+from app.services.email import send_credential_email
 
 router = APIRouter()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -144,7 +145,7 @@ def _mask_email(email: str) -> str:
     summary="Emitir credenciales para asistentes de un evento",
     dependencies=[Depends(require_admin)],
 )
-async def issue_credentials(event_id: int, request: Request):
+async def issue_credentials(event_id: int, request: Request, background: BackgroundTasks):
     event = _get_event_or_404(event_id)
     if not event.get("requires_certificate", False):
         raise HTTPException(
@@ -194,6 +195,7 @@ async def issue_credentials(event_id: int, request: Request):
     issued = 0
     failed = 0
     base_url = _get_base_url(request)
+    dashboard_url = f"{base_url}/dashboard" if base_url else "/dashboard"
     bucket_name = "certificates"
     template_name = "default"
     template_path = BASE_DIR / "templates" / "certificates" / "default.html"
@@ -293,6 +295,27 @@ async def issue_credentials(event_id: int, request: Request):
                 file_options={"content-type": "application/pdf", "upsert": "true"},
             )
             sb.table("credentials").update({"certificate_url": file_path}).eq("id", credential_row.get("id")).execute()
+            sb.table("notifications").insert(
+                {
+                    "user_id": user_id,
+                    "title": "Microcredencial disponible",
+                    "message": f"Tu microcredencial de {event.get('title') or 'evento académico'} ya está lista.",
+                    "link_url": verify_url,
+                    "type": "credential",
+                    "is_read": False,
+                }
+            ).execute()
+
+            user_email = user.get("email") or ""
+            if user_email:
+                background.add_task(
+                    send_credential_email,
+                    user_email,
+                    context.get("full_name") or "",
+                    context.get("event_title") or "",
+                    verify_url,
+                    dashboard_url,
+                )
             issued += 1
         except Exception:
             failed += 1
@@ -314,8 +337,8 @@ async def issue_credentials(event_id: int, request: Request):
     summary="Emitir credenciales por evento (alias)",
     dependencies=[Depends(require_admin)],
 )
-async def issue_credentials_alias(event_id: int, request: Request):
-    return await issue_credentials(event_id, request)
+async def issue_credentials_alias(event_id: int, request: Request, background: BackgroundTasks):
+    return await issue_credentials(event_id, request, background)
 
 
 @router.post(

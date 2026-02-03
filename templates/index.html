@@ -957,6 +957,28 @@
                 showAuthModal('login');
                 return;
             }
+            const event = eventsById[eventId];
+            if (event && event.audience) {
+                const audience = String(event.audience).toLowerCase();
+                const userEmail = (currentUser?.email || '').toLowerCase();
+                const emailDomain = userEmail.includes('@') ? userEmail.split('@')[1] : '';
+                if (audience === 'interno' && !userEmail.endsWith('@pucesm.edu.ec')) {
+                    showAlert('Este evento es exclusivo para PUCE. Inicia sesión con tu correo institucional (@pucesm.edu.ec) para inscribirte.', 'warning');
+                    return;
+                }
+                if (audience === 'interuniversitario') {
+                    const allowedDomains = normalizeList(event.allowed_domains);
+                    const allowedEmails = normalizeList(event.allowed_emails);
+                    if (!allowedDomains.length && !allowedEmails.length) {
+                        showAlert('Este evento es interuniversitario pero aún no tiene universidades habilitadas. Contacta al administrador.', 'warning');
+                        return;
+                    }
+                    if (!allowedEmails.includes(userEmail) && !allowedDomains.includes(emailDomain)) {
+                        showAlert('Este evento es interuniversitario. Tu universidad no está habilitada para inscribirse.', 'danger');
+                        return;
+                    }
+                }
+            }
             const btn = document.querySelector(`button[onclick="enrollToEvent(${eventId})"]`);
             if (btn) {
                 btn.disabled = true;
@@ -1021,6 +1043,17 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function normalizeList(value) {
+            if (!value) return [];
+            if (Array.isArray(value)) {
+                return value.map(item => String(item).trim().toLowerCase()).filter(Boolean);
+            }
+            if (typeof value === 'string') {
+                return value.split(',').map(item => item.trim().toLowerCase()).filter(Boolean);
+            }
+            return [];
         }
 
         function showAlert(message, type) {

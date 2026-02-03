@@ -303,10 +303,10 @@
                 {% endif %}
                 <div class="signature-line"></div>
                 {% if signer_name %}
-                    <div class="signature-name">{{ signer_name }}</div>
+                    <div class="signature-name">{{ signer_name|truncate(40, True, '…') }}</div>
                 {% endif %}
                 {% if signer_role %}
-                    <div class="signature-role">{{ signer_role }}</div>
+                    <div class="signature-role">{{ signer_role|truncate(50, True, '…') }}</div>
                 {% endif %}
                 <div class="signature-unit">PUCE Manabí</div>
             </div>
@@ -316,10 +316,10 @@
                 {% endif %}
                 <div class="signature-line"></div>
                 {% if professor_signer_name %}
-                    <div class="signature-name">{{ professor_signer_name }}</div>
+                    <div class="signature-name">{{ professor_signer_name|truncate(40, True, '…') }}</div>
                 {% endif %}
                 {% if professor_signer_role %}
-                    <div class="signature-role">{{ professor_signer_role }}</div>
+                    <div class="signature-role">{{ professor_signer_role|truncate(50, True, '…') }}</div>
                 {% endif %}
                 <div class="signature-unit">PUCE Manabí</div>
             </div>

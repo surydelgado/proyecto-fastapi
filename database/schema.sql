@@ -64,6 +64,18 @@ CREATE TABLE IF NOT EXISTS credentials (
     certificate_url TEXT
 );
 
+-- Tabla de notificaciones
+CREATE TABLE IF NOT EXISTS notifications (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    message TEXT,
+    link_url TEXT,
+    type VARCHAR(30) DEFAULT 'info',
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_events_creator ON events(creator_id);
 CREATE INDEX IF NOT EXISTS idx_events_start_date ON events(start_date);
@@ -74,12 +86,16 @@ CREATE INDEX IF NOT EXISTS idx_attendances_qr ON attendances(qr_code);
 CREATE INDEX IF NOT EXISTS idx_credentials_user ON credentials(user_id);
 CREATE INDEX IF NOT EXISTS idx_credentials_event ON credentials(event_id);
 CREATE INDEX IF NOT EXISTS idx_credentials_code ON credentials(credential_code);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
+CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created_at);
 
 -- Row Level Security
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE attendances ENABLE ROW LEVEL SECURITY;
 ALTER TABLE credentials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS
 CREATE POLICY "Users can view own profile" ON users
@@ -102,3 +118,9 @@ CREATE POLICY "Users can view own attendances" ON attendances
 
 CREATE POLICY "Users can create own attendances" ON attendances
     FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can view own notifications" ON notifications
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own notifications" ON notifications
+    FOR UPDATE USING (auth.uid() = user_id);
