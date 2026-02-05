@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: proyecto-fastapi
+    env: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: QR_TOKEN_SECRET
+        sync: false
+      - key: PUCE_ALLOWED_DOMAINS
+        sync: false
