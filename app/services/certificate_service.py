@@ -86,4 +86,29 @@ def render_certificate_html(context: dict, template_name: str = "certificates/de
 
 
 def render_certificate_pdf(html: str) -> bytes:
-    return HTML(string=html, base_url=str(BASE_DIR)).write_pdf()
+    from io import BytesIO
+    pdf_bytes = HTML(string=html, base_url=str(BASE_DIR)).write_pdf()
+    
+    # Eliminar páginas en blanco al final usando PyPDF2
+    try:
+        from PyPDF2 import PdfReader, PdfWriter
+        pdf_reader = PdfReader(BytesIO(pdf_bytes))
+        
+        # Si hay más de 2 páginas, eliminar las páginas en blanco al final
+        if len(pdf_reader.pages) > 2:
+            pdf_writer = PdfWriter()
+            # Agregar solo las primeras 2 páginas
+            for i in range(min(2, len(pdf_reader.pages))):
+                pdf_writer.add_page(pdf_reader.pages[i])
+            
+            output_buffer = BytesIO()
+            pdf_writer.write(output_buffer)
+            return output_buffer.getvalue()
+        
+        return pdf_bytes
+    except ImportError:
+        # Si PyPDF2 no está instalado, retornar el PDF original
+        return pdf_bytes
+    except Exception:
+        # Si hay algún error, retornar el PDF original
+        return pdf_bytes

@@ -15,5 +15,6 @@ Pillow
 weasyprint
 resend
 tzdata
+PyPDF2
 
 

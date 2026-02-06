@@ -129,6 +129,42 @@ def _build_folio(credential_id: int | None, issued_at: str | datetime | None) ->
     return f"PUCE-{year}-{numeric:06d}"
 
 
+def _normalize_signers(event: dict) -> dict:
+    """
+    Normaliza los datos de firmantes del evento.
+    Retorna un diccionario con los datos de firmantes normalizados.
+    Un firmante se considera existente si tiene al menos nombre o imagen.
+    
+    Retorna:
+        dict con claves: signer_name, signer_role, signer_image_url,
+        professor_signer_name, professor_signer_role, professor_signer_image_url,
+        requires_professor_signature
+    """
+    # Firmante 1 (institucional)
+    signer_name = (event.get("certificate_signer_name") or "").strip()
+    signer_role = (event.get("certificate_signer_role") or "").strip()
+    signer_image_url = (event.get("certificate_signer_image_url") or "").strip()
+    has_signer_1 = bool(signer_name or signer_image_url)
+    
+    # Firmante 2 (profesor)
+    professor_signer_name = (event.get("certificate_professor_signer_name") or "").strip()
+    professor_signer_role = (event.get("certificate_professor_signer_role") or "").strip()
+    professor_signer_image_url = (event.get("certificate_professor_signer_image_url") or "").strip()
+    has_signer_2 = bool(professor_signer_name or professor_signer_image_url)
+    
+    # Normalizar: solo incluir datos si el firmante existe
+    # Usar strings vacíos en lugar de None para evitar problemas en la plantilla
+    return {
+        "signer_name": signer_name if has_signer_1 else "",
+        "signer_role": signer_role if has_signer_1 else "",
+        "signer_image_url": signer_image_url if has_signer_1 else "",
+        "professor_signer_name": professor_signer_name if has_signer_2 else "",
+        "professor_signer_role": professor_signer_role if has_signer_2 else "",
+        "professor_signer_image_url": professor_signer_image_url if has_signer_2 else "",
+        "requires_professor_signature": has_signer_2,
+    }
+
+
 def _mask_email(email: str) -> str:
     if not email or "@" not in email:
         return ""
@@ -226,20 +262,8 @@ async def issue_credentials(event_id: int, request: Request, background: Backgro
         event_type = event.get("event_type") or ""
         is_long_form = _is_long_form_event(event_type)
 
-        signer_name = (event.get("certificate_signer_name") or "").strip()
-        signer_role = (event.get("certificate_signer_role") or "").strip()
-        second_signer_name = (event.get("certificate_professor_signer_name") or "").strip()
-        second_signer_role = (event.get("certificate_professor_signer_role") or "").strip()
-        if not signer_name or not signer_role:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Debes configurar el nombre y cargo del firmante institucional.",
-            )
-        if not second_signer_name or not second_signer_role:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Debes configurar el nombre y cargo del segundo firmante institucional.",
-            )
+        # Normalizar firmantes: soporta 0, 1 o 2 firmantes
+        signers_data = _normalize_signers(event)
 
         context = {
             "certificate_title": event.get("certificate_title") or "Certificado de Asistencia",
@@ -255,13 +279,13 @@ async def issue_credentials(event_id: int, request: Request, background: Backgro
             "location": event.get("location") or "",
             "duration_hours": duration_hours,
             "is_long_form": is_long_form,
-            "signer_name": signer_name,
-            "signer_role": signer_role,
-            "signer_image_url": event.get("certificate_signer_image_url") or "",
-            "requires_professor_signature": True,
-            "professor_signer_name": second_signer_name,
-            "professor_signer_role": second_signer_role,
-            "professor_signer_image_url": event.get("certificate_professor_signer_image_url") or "",
+            "signer_name": signers_data["signer_name"],
+            "signer_role": signers_data["signer_role"],
+            "signer_image_url": signers_data["signer_image_url"],
+            "requires_professor_signature": signers_data["requires_professor_signature"],
+            "professor_signer_name": signers_data["professor_signer_name"],
+            "professor_signer_role": signers_data["professor_signer_role"],
+            "professor_signer_image_url": signers_data["professor_signer_image_url"],
             "credential_code": code,
             "verify_url": verify_url,
             "logo_data_uri": assets.logo_data_uri,
