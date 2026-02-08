@@ -5,7 +5,7 @@ import resend
 
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-RESEND_FROM = os.getenv("RESEND_FROM", "Eventos <onboarding@resend.dev>")
+RESEND_FROM = os.getenv("RESEND_FROM", "Proyecto Eventos <no-reply@proyectoeventos12.site>")
 logger = logging.getLogger(__name__)
 
 
