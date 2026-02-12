@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS events (
     end_date TIMESTAMPTZ NOT NULL,
     location VARCHAR(150),
     capacity INTEGER CHECK (capacity > 0),
-    status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'denied', 'finalized')),
+    status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'denied', 'finalized', 'cancelled')),
     is_active BOOLEAN DEFAULT TRUE,
     creator_id UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()

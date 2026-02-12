@@ -100,3 +100,68 @@ def send_credential_email(
     except Exception:
         logger.exception("Fallo al enviar correo de microcredencial con Resend.")
         return None
+
+
+def send_cancellation_email(
+    to_email: str,
+    full_name: str,
+    event_title: str,
+    event_date: str | None = None,
+    event_location: str | None = None,
+) -> dict | None:
+    """
+    Envía un correo notificando la cancelación de un evento.
+    """
+    if not RESEND_API_KEY:
+        logger.warning("RESEND_API_KEY no configurada; se omite el envio de correos.")
+        return None
+    if not to_email:
+        logger.warning("Email destino vacio; se omite el envio de correos.")
+        return None
+
+    resend.api_key = RESEND_API_KEY
+    safe_name = full_name or "participante"
+    safe_event = event_title or "evento académico"
+    
+    event_info = ""
+    if event_date:
+        event_info += f"<div><strong>Fecha:</strong> {event_date}</div>"
+    if event_location:
+        event_info += f"<div><strong>Ubicación:</strong> {event_location}</div>"
+    
+    event_info_block = f'<div style="padding:14px 16px;border:1px solid #e6ebf5;border-radius:10px;background:#f9fafc;margin:12px 0;">{event_info}</div>' if event_info else ""
+
+    html = f"""
+    <div style="font-family:Arial,Helvetica,sans-serif;background-color:#f4f6fb;padding:24px;">
+        <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e3e7f0;">
+            <div style="background:#dc3545;color:#ffffff;padding:20px 24px;">
+                <div style="font-size:14px;letter-spacing:0.5px;text-transform:uppercase;">Proyecto Eventos</div>
+                <h1 style="margin:6px 0 0;font-size:22px;">Evento Cancelado</h1>
+            </div>
+            <div style="padding:22px 24px;color:#1f2a44;">
+                <p style="margin:0 0 12px;">Hola {safe_name},</p>
+                <p style="margin:0 0 12px;">Lamentamos informarte que el evento <strong>{safe_event}</strong> ha sido cancelado.</p>
+                {event_info_block}
+                <p style="margin:16px 0 0;font-size:13px;color:#2a3d66;">
+                    Si tienes alguna pregunta o necesitas más información, puedes contactarnos respondiendo a este correo.
+                </p>
+            </div>
+            <div style="padding:14px 24px;background:#f2f5fb;color:#2a3d66;font-size:12px;">
+                Si tienes dudas, responde a este correo.
+            </div>
+        </div>
+    </div>
+    """
+
+    try:
+        return resend.Emails.send(
+            {
+                "from": RESEND_FROM,
+                "to": to_email,
+                "subject": f"Evento cancelado: {safe_event}",
+                "html": html,
+            }
+        )
+    except Exception:
+        logger.exception("Fallo al enviar correo de cancelación con Resend.")
+        return None

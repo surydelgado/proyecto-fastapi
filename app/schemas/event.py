@@ -43,7 +43,7 @@ class EventUpdate(APIModel):
     start_date: datetime | None = None
     end_date: datetime | None = None
     capacity: int | None = Field(default=None, ge=1)
-    status: str | None = Field(default=None, pattern="^(pending|approved|denied|finalized)$")
+    status: str | None = Field(default=None, pattern="^(pending|approved|denied|finalized|cancelled)$")
     requires_certificate: bool | None = None
     certificate_template: str | None = Field(default=None, max_length=100)
     certificate_title: str | None = Field(default=None, max_length=200)
@@ -59,7 +59,7 @@ class EventUpdate(APIModel):
 
 class EventRead(EventBase, TimestampMixin):
     id: int
-    status: str | None = Field(default=None, pattern="^(pending|approved|denied|finalized)$")
+    status: str | None = Field(default=None, pattern="^(pending|approved|denied|finalized|cancelled)$")
     is_active: bool = True
     creator_id: str | None = None
     creator_name: str | None = None

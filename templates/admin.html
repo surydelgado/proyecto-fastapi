@@ -405,6 +405,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#" onclick="changeEventStatus('approved')">Aprobado</a></li>
                             <li><a class="dropdown-item" href="#" onclick="changeEventStatus('finalized')">Finalizado</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeEventStatus('cancelled')">Cancelado</a></li>
                         </ul>
                     </div>
                 </div>
@@ -870,7 +871,8 @@
                 'pending': '<span class="badge bg-warning text-dark">Pendiente</span>',
                 'approved': '<span class="badge bg-success">Aprobado</span>',
                 'denied': '<span class="badge bg-danger">Rechazado</span>',
-                'finalized': '<span class="badge bg-info">Finalizado</span>'
+                'finalized': '<span class="badge bg-info">Finalizado</span>',
+                'cancelled': '<span class="badge bg-danger">Cancelado</span>'
             };
             return badges[normalizeStatus(status)] || '<span class="badge bg-secondary">Desconocido</span>';
         }
@@ -1473,7 +1475,12 @@
         }
 
         async function changeEventStatusById(eventId, newStatus) {
-            const statusText = newStatus === 'approved' ? 'aprobado' : 'finalizado';
+            const statusMap = {
+                'approved': 'aprobado',
+                'finalized': 'finalizado',
+                'cancelled': 'cancelado'
+            };
+            const statusText = statusMap[newStatus] || newStatus;
             if (!confirm(`¿Estás seguro de que deseas cambiar el estado del evento a "${statusText}"?`)) {
                 return;
             }

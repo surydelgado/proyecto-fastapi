@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from enum import Enum
-from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, Form, BackgroundTasks
 from typing import Optional
 from pathlib import Path
 from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from supabase import Client, create_client
-from app.config import SUPABASE_KEY, SUPABASE_URL, supabase, supabase_admin
+from app.config import SUPABASE_KEY, SUPABASE_URL, supabase, supabase_admin, APP_BASE_URL
 from app.schemas.event import EventCreate, EventRead, EventUpdate, EventValidated
 from app.auth import get_current_user, require_admin
+from app.services.email import send_cancellation_email
 
 
 router = APIRouter()
@@ -899,10 +901,97 @@ async def reject_event(
 class EventStatus(str, Enum):
     APPROVED = "approved"
     FINALIZED = "finalized"
+    CANCELLED = "cancelled"
 
 
 class EventStatusUpdate(BaseModel):
     status: EventStatus
+
+
+def _notify_cancelled_event(event_id: int, event: dict):
+    """
+    Envía notificaciones y correos a todos los usuarios inscritos cuando un evento se cancela.
+    Esta función se ejecuta en background.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Obtener todos los usuarios inscritos en el evento
+        attendances_response = supabase_admin.table("attendances").select("user_id").eq("event_id", event_id).execute()
+        
+        if not attendances_response.data or len(attendances_response.data) == 0:
+            return  # No hay usuarios inscritos
+        
+        user_ids = [attendance["user_id"] for attendance in attendances_response.data]
+        
+        # Obtener información de los usuarios
+        users_response = supabase_admin.table("users").select("id, names, surnames, email").in_("id", user_ids).execute()
+        
+        if not users_response.data:
+            return
+        
+        # Preparar información del evento para el correo
+        event_title = event.get("title") or "Evento académico"
+        event_location = event.get("location") or "Por confirmar"
+        
+        # Formatear fecha del evento
+        event_date_str = None
+        if event.get("start_date"):
+            try:
+                start_dt = _to_utc(event.get("start_date"))
+                if start_dt:
+                    # Convertir a zona horaria local (Ecuador)
+                    from zoneinfo import ZoneInfo
+                    try:
+                        local_tz = ZoneInfo("America/Guayaquil")
+                    except:
+                        from datetime import timedelta
+                        local_tz = timezone(timedelta(hours=-5))
+                    
+                    local_dt = start_dt.astimezone(local_tz)
+                    months_es = [
+                        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+                        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+                    ]
+                    event_date_str = f"{local_dt.day} de {months_es[local_dt.month - 1]} de {local_dt.year} a las {local_dt.strftime('%H:%M')}"
+            except Exception:
+                pass
+        
+        # Crear notificaciones y enviar correos para cada usuario
+        for user in users_response.data:
+            user_id = user.get("id")
+            user_email = user.get("email")
+            user_names = user.get("names", "")
+            user_surnames = user.get("surnames", "")
+            full_name = f"{user_names} {user_surnames}".strip() or "participante"
+            
+            # Crear notificación
+            try:
+                supabase_admin.table("notifications").insert({
+                    "user_id": user_id,
+                    "title": "Evento cancelado",
+                    "message": f"El evento '{event_title}' ha sido cancelado.",
+                    "link_url": f"{APP_BASE_URL}/dashboard" if APP_BASE_URL else None,
+                    "type": "event_cancelled",
+                    "is_read": False,
+                }).execute()
+            except Exception as e:
+                logger.warning(f"Error al crear notificación para usuario {user_id}: {str(e)}")
+            
+            # Enviar correo
+            if user_email:
+                try:
+                    send_cancellation_email(
+                        to_email=user_email,
+                        full_name=full_name,
+                        event_title=event_title,
+                        event_date=event_date_str,
+                        event_location=event_location,
+                    )
+                except Exception as e:
+                    logger.warning(f"Error al enviar correo de cancelación a {user_email}: {str(e)}")
+    
+    except Exception as e:
+        logger.exception(f"Error al notificar cancelación del evento {event_id}: {str(e)}")
 
 
 @router.patch(
@@ -913,13 +1002,16 @@ class EventStatusUpdate(BaseModel):
 async def change_event_status(
     event_id: int,
     payload: EventStatusUpdate,
+    background: BackgroundTasks,
     current_user: dict = Depends(require_admin)
 ):
     """
-    Cambia el estado de un evento a "approved" o "finalized".
+    Cambia el estado de un evento a "approved", "finalized" o "cancelled".
     Solo accesible para administradores.
+    Si se cancela el evento, se envían notificaciones y correos a los usuarios inscritos.
     """
     event = _get_event_or_404(event_id)
+    old_status = event.get("status", "").lower()
     
     try:
         response = _admin_db(current_user).table("events").update({"status": payload.status.value}).eq("id", event_id).execute()
@@ -930,7 +1022,17 @@ async def change_event_status(
                 detail="Error al cambiar el estado del evento"
             )
         
-        return response.data[0]
+        updated_event = response.data[0]
+        
+        # Si el evento se cancela, enviar notificaciones y correos a los usuarios inscritos
+        if payload.status.value == "cancelled" and old_status != "cancelled":
+            background.add_task(
+                _notify_cancelled_event,
+                event_id,
+                updated_event
+            )
+        
+        return updated_event
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
