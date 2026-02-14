@@ -1,242 +1,69 @@
-#🧪 Sistema de Análisis de Sedimento Urinario mediante Inteligencia Artificial
+# Proyecto FastAPI - Gestión de Eventos Académicos
 
-Sistema web académico que permite analizar imágenes microscópicas de sedimento urinario mediante técnicas de Visión Computacional e Inteligencia Artificial, almacenando resultados en la nube con seguridad por usuario.
+Sistema web para la gestión de eventos académicos (PUCE Manabí) con FastAPI,
+plantillas HTML y servicios de notificaciones.
 
-Proyecto desarrollado para las asignaturas:
+## Requisitos
 
-Interacción Humano–Computador
+- Python 3.11+
+- Git
+- Acceso a Supabase
 
-Base de Datos en la Nube
+## Configuración
 
-📌 Descripción General
+Crea un archivo `.env` en la raíz del proyecto con estas variables:
 
-El sistema permite a un médico:
+```
+SUPABASE_URL=
+SUPABASE_KEY=
+SUPABASE_SERVICE_KEY=
+APP_BASE_URL=
+QR_TOKEN_SECRET=
+PUCE_ALLOWED_DOMAINS=pucesm.edu.ec
+RESEND_KEY=
+```
 
-Iniciar sesión de manera segura.
+> Nota: en producción (Render) estas variables se configuran en el panel de
+> Environment.
 
-Registrar pacientes.
+## Ejecutar en local
 
-Crear visitas clínicas.
-
-Subir imágenes microscópicas (PNG/JPG).
-
-Procesar automáticamente la imagen mediante un modelo de IA (YOLO).
-
-Visualizar detecciones y conteo de partículas.
-
-Guardar resultados en la nube.
-
-El sistema está diseñado como herramienta académica experimental y no reemplaza diagnóstico médico profesional.
-
-🧠 Modelo de Inteligencia Artificial
-
-Se utiliza un modelo de detección de objetos basado en YOLO (You Only Look Once).
-
-Clases detectadas:
-
-Eritrocitos
-
-Leucocitos
-
-Células epiteliales
-
-Cristales
-
-Cilindros
-
-Bacterias
-
-Levaduras
-
-El modelo devuelve:
-
-Bounding boxes
-
-Clase detectada
-
-Nivel de confianza
-
-Conteo total por clase
-
-🏗️ Arquitectura del Sistema
-
-Frontend → FastAPI Backend → Modelo YOLO → Supabase (PostgreSQL + Storage)
-
-Componentes:
-
-Backend: FastAPI
-
-IA: YOLO
-
-Base de datos: PostgreSQL (Supabase)
-
-Storage: Supabase Storage
-
-Autenticación: JWT
-
-Deploy: Render
-
-🗄️ Base de Datos
-
-Base de datos en la nube implementada con Supabase (PostgreSQL).
-
-Tablas principales:
-
-profiles
-
-patients
-
-cases
-
-visits
-
-images
-
-results
-
-Características implementadas:
-
-UUID como claves primarias
-
-Foreign Keys
-
-Row Level Security (RLS)
-
-Multi-tenant por médico
-
-Conexión segura HTTPS/TLS
-
-🔐 Seguridad
-
-Autenticación mediante JWT
-
-Verificación de identidad del médico
-
-Row Level Security (RLS)
-
-Separación de datos por usuario
-
-Conexión cifrada
-
-Cada médico solo puede visualizar sus propios pacientes y resultados.
-
-🖥️ Instalación Local
-1️⃣ Clonar el repositorio
-git clone https://github.com/usuario/sistema-sedimento-urinario.git
-cd sistema-sedimento-urinario
-
-2️⃣ Crear entorno virtual
-python -m venv venv
-
-
-Activar entorno:
-
-Windows:
-
-venv\Scripts\activate
-
-
-Mac/Linux:
-
-source venv/bin/activate
-
-3️⃣ Instalar dependencias
+```
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-4️⃣ Crear archivo .env
+Si necesitas exponer la app en la red local:
 
-Crear un archivo .env en la raíz del proyecto:
+```
+python run_server.py
+```
 
-SUPABASE_URL=tu_url_de_supabase
-SUPABASE_KEY=tu_service_role_key
-SECRET_KEY=tu_clave_secreta
-MODEL_PATH=path_del_modelo.pt
+## Despliegue en Render
 
-5️⃣ Ejecutar el servidor
-uvicorn main:app --reload
+El proyecto incluye `Dockerfile` y `render.yaml`, por lo que el flujo es:
 
+1. Conectar el repositorio en Render (Blueprint).
+2. Configurar variables de entorno en el servicio.
+3. Deploy.
 
-El sistema estará disponible en:
+Cuando cambies variables de entorno en Render, usa **Save, rebuild and deploy**
+para aplicar los cambios.
 
-http://127.0.0.1:8000
+### Variables recomendadas en Render
 
-🚀 Deploy
+- `SUPABASE_URL`
+- `SUPABASE_KEY`
+- `SUPABASE_SERVICE_KEY`
+- `RESEND_KEY`
+- `APP_BASE_URL` (URL pública del servicio Render)
+- `QR_TOKEN_SECRET`
+- `PUCE_ALLOWED_DOMAINS`
 
-Backend desplegado en Render.
+## Tests
 
-Para producción se debe:
-
-Configurar variables de entorno en Render
-
-Definir correctamente el puerto (PORT)
-
-Establecer WEB_CONCURRENCY=1 si se requiere
-
-🎯 Alcance del Proyecto
-
-Incluye:
-
-Subida de imágenes PNG/JPG
-
-Procesamiento automático con IA
-
-Almacenamiento en la nube
-
-Visualización de resultados
-
-Gestión de pacientes y visitas
-
-No incluye:
-
-Diagnóstico médico oficial
-
-Integración hospitalaria
-
-Análisis en tiempo real desde microscopio
-
-Procesamiento 3D
-
-🧩 Principios de Ingeniería Aplicados
-
-SRP (Single Responsibility Principle)
-
-Separación por capas
-
-Inyección de dependencias
-
-Arquitectura cliente-servidor
-
-Seguridad por diseño
-
-📚 Tecnologías Utilizadas
-
-Python
-
-FastAPI
-
-YOLO
-
-Supabase
-
-PostgreSQL
-
-JWT
-
-Uvicorn
-
-Render
-
-⚠️ Limitaciones
-
-El modelo puede mejorarse con más datos.
-
-El tiempo de inferencia depende del entorno de ejecución.
-
-Proyecto de carácter académico.
-
-👩‍💻 Autora
-
-Sury Nohelia Delgado Buste
-Carrera de Software
-Cuarto Semestre
-Periodo 2025-02
+```
+pytest
+```
